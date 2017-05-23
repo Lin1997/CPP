@@ -60,7 +60,6 @@ public:
 	{
 		return Name.getName();
 	}
-	virtual bool login() = 0;
 	virtual void resetpassword() = 0;
 	virtual void showinf()const
 	{
@@ -74,7 +73,6 @@ private:
 	int Mark;
 public:
 	Student(char * name = "NoName", char * password = "0000",int mark=0);
-	virtual bool login();
 	virtual void resetpassword();
 	virtual void showinf()const
 	{
@@ -85,13 +83,30 @@ public:
 
 class Teacher :public People
 {
-
+private:
+	
+public:
+	Teacher(char * name = "NoName", char * password = "0000");
+	virtual void resetpassword();
+	virtual void showinf()const
+	{
+		People::showinf();
+	}
 };
 
 class Admin :public People
 {
+private:
 
+public:
+	Admin(char * name = "NoName", char * password = "0000");
+	virtual void resetpassword();
+	virtual void showinf()const
+	{
+		Admin::showinf();
+	}
 };
+Admin admin;		//管理员账户
 
 class StuNode				//学生列表
 {
@@ -117,16 +132,24 @@ public:
 	~StuNode()
 	{
 	}
-	void searchname(char * name)
+	static bool isempty()
+	{
+		return pHead == NULL ? true : false;
+	}
+	static void searchnameName(char * name)
 	{
 		StuNode * temp = pHead;
-		while (strcmp(temp->data.getName(),name) != 0 && temp != NULL)
+		while (temp != NULL && strcmp(temp->data.getName(),name) != 0)
 		{
 			temp = temp->pNext;
 		}
 		if (temp)
 		{
-			cout << "找到名字为" << temp->data.getName() << "的学生" << endl;
+			cout << "找到名字为\"" << name << "\"的学生" << endl;
+		}
+		else
+		{
+			cout << "没有找到名字为\"" << name << "\"的学生！" << endl;
 		}
 	}
 	static void showall()
@@ -143,8 +166,59 @@ StuNode * StuNode::pHead = NULL;
 
 class TeaNode				//老师列表
 {
-
+private:
+	Teacher data;
+	static TeaNode * pHead;
+	TeaNode *pNext;
+public:
+	TeaNode()
+	{
+		if (pHead == NULL)
+		{
+			pHead = this;
+			pNext = NULL;
+		}
+		else
+		{
+			TeaNode * temp = pHead;
+			pHead = this;
+			pNext = temp;
+		}
+	}
+	~TeaNode()
+	{
+	}
+	static bool isempty()
+	{
+		return pHead == NULL ? true : false;
+	}
+	static void searchnameName(char * name)
+	{
+		TeaNode * temp = pHead;
+		while (temp != NULL && strcmp(temp->data.getName(), name) != 0)
+		{
+			temp = temp->pNext;
+		}
+		if (temp)
+		{
+			cout << "找到名字为\"" << name << "\"的老师" << endl;
+		}
+		else
+		{
+			cout << "没有找到名字为\"" << name << "\"的老师！" << endl;
+		}
+	}
+	static void showall()
+	{
+		TeaNode * temp = pHead;
+		while (temp)
+		{
+			temp->data.showinf();
+			temp = temp->pNext;
+		}
+	}
 };
+TeaNode * TeaNode::pHead = NULL;
 
 /*								类成员函数实现								*/	
 ostream & operator<<(ostream & os, const Name &name)
@@ -184,19 +258,13 @@ Student::Student(char * name, char * password, int mark):People(name,password)
 {
 	Mark = mark;
 }
-bool Student::login()
-{
-	cout << "请输入用户名：" << endl;
-	char name[30];
-	cin.getline(name, 30);
-	return false;
-}
 void Student::resetpassword()
 {
 }
 
 enum menutype { first, second, third };
 void menu(menutype type);					//显示菜单函数
+bool login();					//登陆函数
 void encrypt();				//加密函数
 void decrypt();				//解密函数
 
@@ -222,15 +290,29 @@ void menu(menutype type)
 	}
 }
 
+bool login()
+{
+	if (StuNode::isempty()&&StuNode::isempty())
+	{
+		cout << "用户列表为空，请以管理员账户登录系统！" << endl
+			<< "请输入管理员名称：" << endl;
+		char name[30];
+		cin.getline(name, 30);
+		cout << "请输入密码：" << endl;
+		char password[30];
+
+		
+	}
+	cout << "请输入用户名：" << endl;
+	char name[30];
+	cin.getline(name, 30);
+
+	return false;
+}
 int main()
 {
+	
 	menu(first);
-	StuNode a[5];
-	StuNode::showall();
-	Name b;
-	cout << b << endl;
-	getline(cin, b);
-	cout << b << endl;
 	system("pause");
 	return 0;
 }
