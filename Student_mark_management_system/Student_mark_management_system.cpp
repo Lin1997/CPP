@@ -12,28 +12,28 @@ private:
 	char * pName;
 	char Password[30];
 public:
-	People(char * name = NULL, char * password = "0000");
+	People(char * name = "NoName", char * password = "0000");
 	~People();
 	virtual void login() = 0;
 	virtual void resetpassword() = 0;
 	virtual void showinf()const
 	{
 		cout << "名字：" << pName << endl;
-		cout << Password << endl;
 	}
 };
 
 class Student :public People
 {
 private:
-	int mark;
+	int Mark;
 public:
+	Student(char * name = "NoName", char * password = "0000",int mark=0);
 	virtual void login();
 	virtual void resetpassword();
 	virtual void showinf()const
 	{
 		People::showinf();
-		cout << "分数" << mark << endl;
+		cout << "分数" << Mark << endl;
 	}
 };
 
@@ -47,42 +47,43 @@ class Admin :public People
 
 };
 
-class Stulist				//学生列表
+class StuNode				//学生列表
 {
 private:
-	static Student * pHead;
-	Student *pNext;
+	Student data;
+	static StuNode * pHead;
+	StuNode *pNext;
 public:
-	Stulist()
+	StuNode()
 	{
 		if (pHead==NULL)
 		{
-			pHead = new Student;
+			pHead = this;
 			pNext = NULL;
 		}
 		else
 		{
-			Student * temp = pHead;
-			pHead = new Student;
+			StuNode * temp = pHead;
+			pHead = this;
 			pNext = temp;
 		}
 	}
-	~Stulist()
+	~StuNode()
 	{
-		while (pHead)
+	}
+	static void showall()
+	{
+		StuNode * temp = pHead;
+		while (temp)
 		{
-			delete pHead;
-			pHead = pNext;
+			temp->data.showinf();
+			temp = temp->pNext;
 		}
 	}
-	void show()
-	{
-
-	}
 };
-Student * pHead = NULL;
+StuNode * StuNode::pHead = NULL;
 
-class Tealist				//老师列表
+class TeaNode				//老师列表
 {
 
 };
@@ -128,6 +129,10 @@ People::~People()
 	pName = NULL;
 }
 
+Student::Student(char * name, char * password, int mark):People(name,password)
+{
+	Mark = mark;
+}
 void Student::login()
 {
 }
@@ -135,14 +140,6 @@ void Student::resetpassword()
 {
 }
 
-void Stulist::add()
-{
-
-}
-void Stulist::del()
-{
-
-}
 
 void menu();					//显示菜单函数
 void encrypt();				//加密函数
@@ -151,8 +148,8 @@ void login();
 
 int main()
 {
-	People a("Lin");
-	a.showinf();
+	StuNode a[5];
+	StuNode::showall();
 	system("pause");
 	return 0;
 }
