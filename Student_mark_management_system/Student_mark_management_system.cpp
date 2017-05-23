@@ -58,7 +58,7 @@ public:
 	People(char * name = "NoName", char * password = "0000");
 	char *getName()
 	{
-		return Name.getName;
+		return Name.getName();
 	}
 	virtual bool login() = 0;
 	virtual void resetpassword() = 0;
@@ -120,13 +120,13 @@ public:
 	void searchname(char * name)
 	{
 		StuNode * temp = pHead;
-		while (strcmp(temp->data.getName) != 0 && temp != NULL)
+		while (strcmp(temp->data.getName(),name) != 0 && temp != NULL)
 		{
 			temp = temp->pNext;
 		}
 		if (temp)
 		{
-			cout << "找到名字为" << temp->data.getName << "的学生" << endl;
+			cout << "找到名字为" << temp->data.getName() << "的学生" << endl;
 		}
 	}
 	static void showall()
@@ -189,6 +189,7 @@ bool Student::login()
 	cout << "请输入用户名：" << endl;
 	char name[30];
 	cin.getline(name, 30);
+	return false;
 }
 void Student::resetpassword()
 {
