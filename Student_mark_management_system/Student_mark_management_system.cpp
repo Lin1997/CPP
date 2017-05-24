@@ -171,6 +171,21 @@ public:
 		cin.getline(p->stu.getName(), 30);
 		p->stu.resetpassword();
 	}
+	void add(Student &stu)
+	{
+		StuNode * p = new StuNode;
+		if (pHead == NULL)
+		{
+			pHead = p;
+			pHead->pNext = NULL;
+		}
+		else
+		{
+			p->pNext = pHead;
+			pHead = p;
+		}
+		p->stu = stu;
+	}
 	void del(StuNode * pStuNode)
 	{
 		if (pStuNode == NULL)
@@ -255,6 +270,7 @@ public:
 		cin >> id;
 		return SearchID(id);
 	}
+	friend void savefile();
 }stulist;
 
 class Teacher :public People
@@ -344,6 +360,21 @@ public:
 		cin.getline(p->tea.getName(), 30);
 		p->tea.resetpassword();
 	}
+	void add(Teacher &tea)
+	{
+		TeaNode * p = new TeaNode;
+		if (pHead == NULL)
+		{
+			pHead = p;
+			pHead->pNext = NULL;
+		}
+		else
+		{
+			p->pNext = pHead;
+			pHead = p;
+		}
+		p->tea = tea;
+	}
 	void del(TeaNode * pTeaNode)
 	{
 		if (pTeaNode == NULL)
@@ -404,6 +435,7 @@ public:
 		}
 		return p;
 	}
+	friend void savefile();
 }tealist;
 
 class Admin :public People
@@ -552,17 +584,72 @@ void login()
 void loadfile()
 {
 	ifstream infile;
-	infile.open("D:\\userlist.data");
-	
+	infile.open("D:\\userlist.data",ios_base::binary|ios_base::in);
+	/*读取个数*/
+	int StuSum = 0, TeaSum = 0;
+	infile.read((char*)&StuSum, sizeof(int));
+	infile.read((char*)&TeaSum, sizeof(int));
+	Student *stutemp = new Student;
+	Teacher *teatemp = new Teacher;
+	for (; StuSum > 0; StuSum--)
+	{
+		infile.read((char*)stutemp, sizeof(StuNode) - sizeof(StuNode*));
+		stulist.add(*stutemp);
+	}
+	for (; TeaSum > 0; TeaSum--)
+	{
+		infile.read((char*)teatemp, sizeof(TeaNode) - sizeof(TeaNode*));
+		tealist.add(*teatemp);
+	}
+	delete stutemp;
+	delete teatemp;
+	infile.read((char*)&admin, sizeof(admin));
+	infile.close();
 }
 
 void savefile()
 {
-
+	ofstream outfile;
+	outfile.open("D:\\userlist.data", ios_base::binary | ios_base::out);
+	StuNode *pStu = stulist.pHead;
+	TeaNode *pTea = tealist.pHead;
+	/*开始计数*/
+	int StuSum = 0;
+	int TeaSum = 0;
+	while (pStu)
+	{
+		StuSum++;
+		pStu = pStu->pNext;
+	}
+	while (pTea)
+	{
+		TeaSum++;
+		pTea = pTea->pNext;
+	}
+	pStu = stulist.pHead;
+	pTea = tealist.pHead;
+	/*结束计数*/
+	//前2*sizeof(int)个字节存放个数
+	outfile.write((char*)&StuSum, sizeof(int));
+	outfile.write((char*)&TeaSum, sizeof(int));
+	while (pStu != NULL&&outfile.good())
+	{
+		outfile.write((char*)pStu, sizeof(StuNode) - sizeof(StuNode*));
+		pStu = pStu->pNext;
+	}
+	while (pTea != NULL&&outfile.good())
+	{
+		outfile.write((char*)pTea, sizeof(TeaNode) - sizeof(TeaNode*));
+		pTea = pTea->pNext;
+	}
+	outfile.write((char*)&admin, sizeof(admin));
+	outfile.close();
 }
 
 int main()
 {
+	loadfile();
+	system("pause");
 	menu(Nologin);
 	login();
 	system("pause");
@@ -686,6 +773,7 @@ int main()
 				user->resetpassword();
 				break;
 			case'q':cout << "退出系统" << endl;
+				savefile();
 				system("pause");
 				break;
 			default:
