@@ -106,7 +106,7 @@ public:
 	}
 	virtual void ShowInf()const
 	{
-		cout << "名字：" << name << endl;
+		cout << "名字：" << name;
 	}
 };
 People::People(char * rname, char * password) :name(rname)
@@ -140,6 +140,10 @@ public:
 		ID = id;
 		num++;
 	}
+	long getID()
+	{
+		return ID;
+	}
 	void SetStuMark(int Chinese,int Math, int English)
 	{
 		mark.Chinese = Chinese;
@@ -164,8 +168,14 @@ public:
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << "学号：" << ID << endl;
-		cout << "\t分数" << endl;
+		cout << "\t学号：" << ID << endl;
+	}
+	Mark getMark()
+	{
+		return mark;
+	}
+	void ShowMark()
+	{
 		cout << "语文：" << mark.Chinese << endl
 			<< "数学：" << mark.Math << endl
 			<< "英语：" << mark.English << endl;
@@ -245,6 +255,18 @@ public:
 			p = NULL;
 		}
 	}
+	void DelFromName(char * name = NULL)
+	{
+		del(stulist.SearchName(name));
+	}
+	void DelFromID(long id)
+	{
+		del(stulist.SearchID(id));
+	}
+	void DelFromID()
+	{
+		del(stulist.SearchID());
+	}
 	void ShowAll()
 	{
 		if (pHead == NULL)
@@ -265,7 +287,7 @@ public:
 		{
 			cout << "请输入学生名字：" << endl;
 			cin.getline(name, 30);
-			StuList::SearchName(name);
+			SearchName(name);
 		}
 		StuNode * p = pHead;
 		while (p != NULL && strcmp(p->stu.getName(), name) != 0)
@@ -273,6 +295,22 @@ public:
 			p = p->pNext;
 		}
 		return p;
+	}
+	StuNode * SearchID(long id)
+	{
+		StuNode *p = pHead;
+		while (p != NULL && id != p->stu.getID())
+		{
+			p = p->pNext;
+		}
+		return p;
+	}
+	StuNode * SearchID()
+	{
+		long id;
+		cout << "请输入学号：" << endl;
+		cin >> id;
+		return SearchID(id);
 	}
 }stulist;
 
@@ -389,6 +427,10 @@ public:
 			p = NULL;
 		}
 	}
+	void DelFromName(char *name=NULL)
+	{
+		del(tealist.SearchName(name));
+	}
 	void ShowAll()
 	{
 		if (pHead == NULL)
@@ -407,8 +449,9 @@ public:
 	{
 		if (name == NULL)
 		{
-			cout << "name参数为空！操作终止。" << endl;
-			return NULL;
+			cout << "请输入学生名字：" << endl;
+			cin.getline(name, 30);
+			SearchName(name);
 		}
 		TeaNode * p = pHead;
 		while (p != NULL && strcmp(p->tea.getName(), name) != 0)
@@ -484,7 +527,7 @@ void menu(logintype type)
 		cout << "功能菜单：" << endl;
 		cout <<"a.显示用户列表\t\t"<<"b.添加学生\t\t"<<endl
 			<<"c.删除学生\t\t"<< "d.添加教师\t\t" << endl
-			<<"e.删除教师\t\t" << endl
+			<<"e.删除教师\t\t" << "f.修改密码\t\t"<<endl
 			<< "q.退出系统" << endl;
 		break;
 	default:
@@ -585,7 +628,7 @@ int main()
 			switch (choice)
 			{
 			case'a':cout << "查询自己的成绩" << endl;
-				system("pause");
+				((Student *)user)->ShowMark();
 				break;
 			case'b':cout << "查询全班成绩" << endl;
 				system("pause");
@@ -594,7 +637,7 @@ int main()
 				system("pause");
 				break;
 			case'd':cout << "修改密码" << endl;
-				system("pause");
+				user->resetpassword();
 				break;
 			case'q':cout << "退出系统" << endl;
 				system("pause");
@@ -623,13 +666,25 @@ int main()
 				system("pause");
 				break;
 			case'e':cout << "删除学生" << endl;
-				system("pause");
+				cout << "a.通过名字查找学生\t\tb.通过学号查找学生" << endl;
+				char mode;
+				cin >> mode;
+				while (cin.get() != '\n')
+				{
+					continue;
+				}
+				if (mode == 'a')
+					stulist.DelFromName();
+				else if (mode == 'b')
+					stulist.DelFromID();
+				else
+					cout << "非法输入！" << endl;
 				break;
 			case'f':cout << "导出全班成绩" << endl;
 				system("pause");
 				break;
 			case'g':cout << "修改密码" << endl;
-				system("pause");
+				user->resetpassword();
 				break;
 			case'q':cout << "退出系统" << endl;
 				system("pause");
@@ -650,13 +705,28 @@ int main()
 				stulist.add();
 				break;
 			case'c':cout << "删除学生" << endl;
-				system("pause");
+				cout << "a.通过名字查找学生\t\tb.通过学号查找学生" << endl;
+				char mode;
+				cin >> mode;
+				while (cin.get() != '\n')
+				{
+					continue;
+				}
+				if (mode == 'a')
+					stulist.DelFromName();
+				else if (mode == 'b')
+					stulist.DelFromID();
+				else
+					cout << "非法输入！" << endl;
 				break;
 			case'd':cout << "添加教师" << endl;
-				system("pause");
+				tealist.add();
 				break;
 			case'e':cout << "删除教师" << endl;
-				system("pause");
+				tealist.DelFromName();
+				break;
+			case'f':cout << "修改密码" << endl;
+				user->resetpassword();
 				break;
 			case'q':cout << "退出系统" << endl;
 				system("pause");
