@@ -167,7 +167,7 @@ public:
 class Admin :public People
 {
 private:
-
+	
 public:
 	Admin(char * name = "admin", char * password = "0000") :People(name, password)
 	{
@@ -178,6 +178,15 @@ public:
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
+	}
+	void ShowAll()
+	{
+		cout << "学生列表：" << endl;
+		//StuList::ShowAll();
+		cout << endl;
+		cout << "教师列表：" << endl;
+		//TeaList::ShowAll();
+		cout << endl;
 	}
 }admin;		//管理员账户
 
@@ -229,6 +238,21 @@ public:
 		{
 			p->pNext = pHead;
 			pHead = p;
+		}
+		char newname[30];
+		char newpassword[30];
+		cout << "请输入学生名字" << endl;
+		cin.getline(newname,30);
+		cout << "请输入学生 " << newname << " 的密码：(不输入则默认为\"0000\")" << endl;
+		cin.getline(newpassword,30);
+		strcpy(p->stu.getName(), newname);
+		if (newpassword == '\0')
+		{
+			strcpy(p->stu.getName(), "0000");
+		}
+		else
+		{
+			strcpy(p->stu.getName(), newpassword);
 		}
 	}
 	static void del(StuNode * pStuNode)
@@ -491,7 +515,6 @@ logintype login()
 
 int main()
 {
-	TeaList::add();
 	menu(Nologin);
 	state = login();
 	system("pause");
@@ -505,7 +528,35 @@ int main()
 		menu(state);
 		cout << "请选择操作：" << endl;
 		cin >> choice;
+		while (cin.get() != '\n')
+		{
+			continue;
+		}
 		if (state == Stu)
+		{
+			switch (choice)
+			{
+			case'a':cout << "查询自己的成绩" << endl;
+				system("pause");
+				break;
+			case'b':cout << "查询全班成绩" << endl;
+				system("pause");
+				break;
+			case'c':cout << "导出成绩" << endl;
+				system("pause");
+				break;
+			case'd':cout << "修改密码" << endl;
+				system("pause");
+				break;
+			case'q':cout << "退出系统" << endl;
+				system("pause");
+				break;
+			default:
+				cout << "非法输入！" << endl;
+				system("pause");
+			}
+		}
+		else if (state == Tea)
 		{
 			switch (choice)
 			{
@@ -518,7 +569,9 @@ int main()
 			case'c':cout << "成绩分析" << endl;
 				system("pause");
 				break;
-			case'd':cout << "添加学生" << endl;
+			case'd':
+				cout << "添加学生" << endl;
+				StuList::add();
 				system("pause");
 				break;
 			case'e':cout << "删除学生" << endl;
@@ -537,6 +590,37 @@ int main()
 				cout << "非法输入！" << endl;
 				system("pause");
 			}
+		}
+		else if (state == Adm)
+		{
+			switch (choice)
+			{
+			case'a':cout << "显示用户列表" << endl;
+				admin.ShowAll();
+				break;
+			case'b':cout << "添加学生" << endl;
+				StuList::add();
+				break;
+			case'c':cout << "删除学生" << endl;
+				system("pause");
+				break;
+			case'd':cout << "添加教师" << endl;
+				system("pause");
+				break;
+			case'e':cout << "删除教师" << endl;
+				system("pause");
+				break;
+			case'f':cout << "退出系统" << endl;
+				system("pause");
+				break;
+			default:
+				cout << "非法输入！" << endl;
+				system("pause");
+			}
+		}
+		else
+		{
+			cout << "未登录" << endl;
 		}
 	} while (choice != 'q');
 	return 0;
