@@ -9,79 +9,17 @@ enum logintype { Nologin, Stu, Tea, Adm };				//登陆状态
 class People;		//向前声明
 People * user = NULL;												//当前用户
 logintype state = Nologin;
-class Name
-{
-private:
-	char *pName;
-public:
-	Name(char * name = "NoName"):pName(NULL)
-	{
-		if (name)
-		{
-			pName = new char[strlen(name) + 1];
-			if (pName)
-			{
-				strcpy(pName, name);
-			}
-			else
-			{
-				cout << "申请内存失败！操作取消。" << endl;
-				return;
-			}
-		}
-		else
-		{
-			cout << "pName参数为空！操作取消。" << endl;
-			return;
-		}
-	}
-	~Name()
-	{
-		if (pName)
-		{
-			delete[] pName;
-		}
-		pName = NULL;
-		cout << "析构name(debug)" << endl;
-	}
-	char * getName()
-	{
-		return pName;
-	}
-	friend ostream & operator<<(ostream & os, const Name &name);
-	friend istream &operator>>(istream & is, const Name &name);
-	friend istream &getline(istream &is, const Name &name);
-};
-ostream & operator<<(ostream & os, const Name &name)
-{
-	cout << name.pName;
-	return os;
-}
-istream &operator>>(istream & is, const Name &name)
-{
-	char temp[30];
-	cin.getline(temp, 30);
-	strcpy(name.pName, temp);
-	return is;
-}
-istream &getline(istream &is, const Name &name)
-{
-	char temp[30];
-	cin.getline(temp, 30);
-	strcpy(name.pName, temp);
-	return is;
-}
 
 class People
 {
 private:
-	Name name;
+	char name[30];
 	char Password[30];
 public:
 	People(char * name = "NoName", char * password = "0000");
 	char *getName()
 	{
-		return name.getName();
+		return name;
 	}
 	virtual bool verify(char *input)
 	{
@@ -109,8 +47,12 @@ public:
 		cout << "名字：" << name;
 	}
 };
-People::People(char * rname, char * password) :name(rname)
+People::People(char * rname, char * password)
 {
+	if (rname)
+	{
+		strcpy(name, rname);
+	}
 	//Password
 	if (password)
 	{
@@ -286,8 +228,9 @@ public:
 		if (name == NULL)
 		{
 			cout << "请输入学生名字：" << endl;
-			cin.getline(name, 30);
-			SearchName(name);
+			char rname[30];
+			cin.getline(rname, 30);
+			return SearchName(rname);
 		}
 		StuNode * p = pHead;
 		while (p != NULL && strcmp(p->stu.getName(), name) != 0)
@@ -450,8 +393,9 @@ public:
 		if (name == NULL)
 		{
 			cout << "请输入学生名字：" << endl;
-			cin.getline(name, 30);
-			SearchName(name);
+			char rname[30];
+			cin.getline(rname, 30);
+			SearchName(rname);
 		}
 		TeaNode * p = pHead;
 		while (p != NULL && strcmp(p->tea.getName(), name) != 0)
@@ -494,6 +438,7 @@ void menu(logintype state);					//显示菜单函数
 void login();					//登陆函数
 void encrypt();				//加密函数
 void decrypt();				//解密函数
+void loadfile();				//载入文件函数
 
 void menu(logintype type)
 {
@@ -602,6 +547,18 @@ void login()
 	}
 	cout << "错误次数过多，登录失败！" << endl;
 	state=Nologin;
+}
+
+void loadfile()
+{
+	ifstream infile;
+	infile.open("D:\\userlist.data");
+	
+}
+
+void savefile()
+{
+
 }
 
 int main()
