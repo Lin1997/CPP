@@ -6,6 +6,8 @@
 using namespace std;
 
 enum logintype { Nologin, Stu, Tea, Adm };				//登陆状态
+class People;		//向前声明
+People * user = NULL;												//当前用户
 logintype state = Nologin;
 class Name
 {
@@ -40,6 +42,7 @@ public:
 			delete[] pName;
 		}
 		pName = NULL;
+		cout << "析构name(debug)" << endl;
 	}
 	char * getName()
 	{
@@ -84,7 +87,23 @@ public:
 	{
 		return !strcmp(input, Password);
 	}
-	virtual void resetpassword() = 0;
+	virtual void resetpassword(char * newpassword=NULL)
+	{
+		if (newpassword)
+		{
+			strcpy(Password, newpassword);
+		}
+		else
+		{
+			cout << "请输入新密码：" << endl;
+			cin.getline(Password, 30);
+			if (strcmp(Password, ""))
+			{
+				strcpy(Password, "0000");
+				cout << "密码不能为空，已设置为\"0000\"" << endl;
+			}
+		}
+	}
 	virtual void ShowInf()const
 	{
 		cout << "名字：" << name << endl;
@@ -112,104 +131,61 @@ private:
 		int Math;
 		int English;
 	}mark;
+	long ID;
+	static int num;	//已存学生个数
 public:
-	Student(char * name = "NoName", char * password = "0000", Mark mark = { 0,0,0 }):People(name, password)
+	Student(char * name = "NoName", char * password = "0000",long id=num,Mark mark = { 0,0,0 }) :People(name, password)
 	{
 		this->mark = mark;
+		ID = id;
+		num++;
+	}
+	void SetStuMark(int Chinese,int Math, int English)
+	{
+		mark.Chinese = Chinese;
+		mark.Math = Math;
+		mark.English = English;
+	}
+	void SetStuMark()
+	{
+		int Chinese, Math, English;
+		cout << "请连续输入语文成绩，数学成绩和英语成绩：" << endl;
+		cin >> Chinese >> Math >> English;
+		SetStuMark(Chinese, Math, English);
 	}
 	virtual bool verify(char *password)
 	{
 		return People::verify(password);
 	}
-	virtual void resetpassword()
+	virtual void resetpassword(char * newpassword=NULL)
 	{
+		People::resetpassword(newpassword);
 	}
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << "分数：" << endl;
+		cout << "学号：" << ID << endl;
+		cout << "\t分数" << endl;
 		cout << "语文：" << mark.Chinese << endl
 			<< "数学：" << mark.Math << endl
 			<< "英语：" << mark.English << endl;
 	}
 };
-
-class Teacher :public People
-{
-private:
-	char subject[10];
-public:
-	Teacher(char * name = "NoName", char * password = "0000",char * subject="UnDefined") :People(name, password)
-	{
-		if (subject)
-		{
-			strcpy(this->subject, subject);
-		}
-		else
-		{
-			cout << "subject参数为空！" << endl;
-		}
-	}
-	virtual bool verify(char *password)
-	{
-		return People::verify(password);
-	}
-	virtual void resetpassword()
-	{}
-	virtual void ShowInf()const
-	{
-		People::ShowInf();
-		cout << "授课：" << endl;
-		cout << this->subject << endl;
-	}
-};
-
-class Admin :public People
-{
-private:
-	
-public:
-	Admin(char * name = "admin", char * password = "0000") :People(name, password)
-	{
-	}
-	virtual void resetpassword()
-	{
-	}
-	virtual void ShowInf()const
-	{
-		People::ShowInf();
-	}
-	void ShowAll()
-	{
-		cout << "学生列表：" << endl;
-		//StuList::ShowAll();
-		cout << endl;
-		cout << "教师列表：" << endl;
-		//TeaList::ShowAll();
-		cout << endl;
-	}
-}admin;		//管理员账户
-
+int Student::num = 1;
 
 struct StuNode
 {
 	Student stu;
 	StuNode * pNext;
 };
-struct TeaNode
-{
-	Teacher tea;
-	TeaNode * pNext;
-};
-
-
 class StuList
 {
 private:
-	static StuNode * pHead;
+	StuNode * pHead;
 public:
 	StuList()
 	{
+		pHead = NULL;
 	}
 	~StuList()
 	{
@@ -222,11 +198,11 @@ public:
 		}
 		p = NULL;
 	}
-	static bool isempty()
+	bool isempty()
 	{
 		return pHead == NULL;
 	}
-	static void add()
+	void add()
 	{
 		StuNode * p = new StuNode;
 		if (pHead == NULL)
@@ -239,25 +215,13 @@ public:
 			p->pNext = pHead;
 			pHead = p;
 		}
-		char newname[30];
-		char newpassword[30];
-		cout << "请输入学生名字" << endl;
-		cin.getline(newname,30);
-		cout << "请输入学生 " << newname << " 的密码：(不输入则默认为\"0000\")" << endl;
-		cin.getline(newpassword,30);
-		strcpy(p->stu.getName(), newname);
-		if (newpassword == '\0')
-		{
-			strcpy(p->stu.getName(), "0000");
-		}
-		else
-		{
-			strcpy(p->stu.getName(), newpassword);
-		}
+		cout << "请输入学生名字：" << endl;
+		cin.getline(p->stu.getName(), 30);
+		p->stu.resetpassword();
 	}
-	static void del(StuNode * pStuNode)
+	void del(StuNode * pStuNode)
 	{
-		if (pStuNode==NULL)
+		if (pStuNode == NULL)
 		{
 			cout << "pStuNode参数为空！" << endl;
 			return;
@@ -281,7 +245,7 @@ public:
 			p = NULL;
 		}
 	}
-	static void ShowAll()
+	void ShowAll()
 	{
 		if (pHead == NULL)
 		{
@@ -295,27 +259,74 @@ public:
 			p = p->pNext;
 		}
 	}
-	static StuNode * SearchName(char * name)
+	StuNode * SearchName(char * name = NULL)
 	{
 		if (name == NULL)
 		{
-			cout << "name参数为空！操作终止。" << endl;
-			return NULL;
+			cout << "请输入学生名字：" << endl;
+			cin.getline(name, 30);
+			StuList::SearchName(name);
 		}
 		StuNode * p = pHead;
-		while (p!=NULL && strcmp(p->stu.getName(),name)!=0)
+		while (p != NULL && strcmp(p->stu.getName(), name) != 0)
 		{
 			p = p->pNext;
 		}
 		return p;
 	}
-};
-StuNode * StuList::pHead = NULL;				//初始化
+}stulist;
 
+class Teacher :public People
+{
+private:
+	char subject[10];
+public:
+	Teacher(char * name = "NoName", char * password = "0000",char * subject="UnDefined") :People(name, password)
+	{
+		if (subject)
+		{
+			strcpy(this->subject, subject);
+		}
+		else
+		{
+			cout << "subject参数为空！" << endl;
+		}
+	}
+	void SetStuMark(char * StuName=NULL)
+	{
+		if (StuName)
+		{
+			stulist.SearchName(StuName)->stu.SetStuMark();
+		}
+		else
+		{
+			cout << "根据学号从小到大录入" << endl;
+		}
+	}
+	virtual bool verify(char *password)
+	{
+		return People::verify(password);
+	}
+	virtual void resetpassword(char *newpassword=NULL)
+	{
+		People::resetpassword(newpassword);
+	}
+	virtual void ShowInf()const
+	{
+		People::ShowInf();
+		cout << "授课：" << endl;
+		cout << this->subject << endl;
+	}
+};
+struct TeaNode
+{
+	Teacher tea;
+	TeaNode * pNext;
+};
 class TeaList
 {
 private:
-	static TeaNode * pHead;
+	TeaNode * pHead;
 public:
 	TeaList()
 	{
@@ -331,11 +342,11 @@ public:
 		}
 		p = NULL;
 	}
-	static bool isempty()
+	bool isempty()
 	{
 		return pHead == NULL;
 	}
-	static void add()
+	void add()
 	{
 		TeaNode * p = new TeaNode;
 		if (pHead == NULL)
@@ -348,8 +359,11 @@ public:
 			p->pNext = pHead;
 			pHead = p;
 		}
+		cout << "请输入教师名字：" << endl;
+		cin.getline(p->tea.getName(), 30);
+		p->tea.resetpassword();
 	}
-	static void del(TeaNode * pTeaNode)
+	void del(TeaNode * pTeaNode)
 	{
 		if (pTeaNode == NULL)
 		{
@@ -375,7 +389,7 @@ public:
 			p = NULL;
 		}
 	}
-	static void ShowAll()
+	void ShowAll()
 	{
 		if (pHead == NULL)
 		{
@@ -389,7 +403,7 @@ public:
 			p = p->pNext;
 		}
 	}
-	static TeaNode * SearchName(char * name)
+	TeaNode * SearchName(char * name)
 	{
 		if (name == NULL)
 		{
@@ -403,11 +417,38 @@ public:
 		}
 		return p;
 	}
-};
-TeaNode * TeaList::pHead = NULL;				//初始化
+}tealist;
+
+class Admin :public People
+{
+private:
+
+public:
+	Admin(char * name = "admin", char * password = "0000") :People(name, password)
+	{
+	}
+	virtual void resetpassword(char *newpassword=NULL)
+	{
+		People::resetpassword(newpassword);
+	}
+	virtual void ShowInf()const
+	{
+		People::ShowInf();
+	}
+	void ShowAll()
+	{
+		cout << "学生列表：" << endl;
+		stulist.ShowAll();
+		cout << endl;
+		cout << "教师列表：" << endl;
+		tealist.ShowAll();
+		cout << endl;
+		system("pause");
+	}
+}admin;		//管理员账户
 
 void menu(logintype state);					//显示菜单函数
-logintype login();					//登陆函数
+void login();					//登陆函数
 void encrypt();				//加密函数
 void decrypt();				//解密函数
 
@@ -441,8 +482,9 @@ void menu(logintype type)
 		break;
 	case Adm:
 		cout << "功能菜单：" << endl;
-		cout << "a.添加学生\t\t" << "b.删除学生\t\t" << endl
-			<< "c.添加教师\t\t" << "d.删除教师\t\t" << endl
+		cout <<"a.显示用户列表\t\t"<<"b.添加学生\t\t"<<endl
+			<<"c.删除学生\t\t"<< "d.添加教师\t\t" << endl
+			<<"e.删除教师\t\t" << endl
 			<< "q.退出系统" << endl;
 		break;
 	default:
@@ -450,11 +492,11 @@ void menu(logintype type)
 	}
 }
 
-logintype login()
+void login()
 {
 	char name[30];
 	char password[30];
-	if (StuList::isempty() && TeaList::isempty())
+	if (stulist.isempty() && tealist.isempty())
 	{
 		cout << "老师列表和学生列表都为空，请以管理员账户登陆。" << endl;
 	}
@@ -464,15 +506,17 @@ logintype login()
 		cin.getline(name, 30);
 		cout << "请输入密码：" << endl;
 		cin.getline(password, 30);
-		StuNode *pStu = StuList::SearchName(name);
-		TeaNode *pTea = TeaList::SearchName(name);
+		StuNode *pStu = stulist.SearchName(name);
+		TeaNode *pTea = tealist.SearchName(name);
 		if (pStu)
 		{
 			if (pStu->stu.verify(password))
 			{
 				cout << "登陆成功：" << endl;
 				cout << "当前账户：" << pStu->stu.getName() << "(学生)" << endl;
-				return Stu;
+				state = Stu;
+				user = &pStu->stu;
+				return;
 			}
 			else
 			{
@@ -486,7 +530,9 @@ logintype login()
 			{
 				cout << "登陆成功：" << endl;
 				cout << "当前账户：" << pTea->tea.getName() << "(教师)" << endl;
-				return Tea;
+				state = Tea;
+				user = &pTea->tea;
+				return;
 			}
 			else
 			{
@@ -500,7 +546,9 @@ logintype login()
 			{
 				cout << "登陆成功：" << endl;
 				cout << "当前账户：" << admin.getName() << "(管理员)" << endl;
-				return Adm;
+				state = Adm;
+				user = &admin;
+				return;
 			}
 			else
 			{
@@ -510,13 +558,13 @@ logintype login()
 		}
 	}
 	cout << "错误次数过多，登录失败！" << endl;
-	return Nologin;
+	state=Nologin;
 }
 
 int main()
 {
 	menu(Nologin);
-	state = login();
+	login();
 	system("pause");
 	if (state == Nologin)
 	{
@@ -571,7 +619,7 @@ int main()
 				break;
 			case'd':
 				cout << "添加学生" << endl;
-				StuList::add();
+				stulist.add();
 				system("pause");
 				break;
 			case'e':cout << "删除学生" << endl;
@@ -599,7 +647,7 @@ int main()
 				admin.ShowAll();
 				break;
 			case'b':cout << "添加学生" << endl;
-				StuList::add();
+				stulist.add();
 				break;
 			case'c':cout << "删除学生" << endl;
 				system("pause");
@@ -610,7 +658,7 @@ int main()
 			case'e':cout << "删除教师" << endl;
 				system("pause");
 				break;
-			case'f':cout << "退出系统" << endl;
+			case'q':cout << "退出系统" << endl;
 				system("pause");
 				break;
 			default:
