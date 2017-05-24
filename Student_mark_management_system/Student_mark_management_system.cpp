@@ -114,7 +114,7 @@ public:
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << "\t学号：" << ID << endl;
+		cout << "\t学号：" << ID;
 	}
 	Mark getMark()
 	{
@@ -125,6 +125,21 @@ public:
 		cout << "语文：" << mark.Chinese << endl
 			<< "数学：" << mark.Math << endl
 			<< "英语：" << mark.English << endl;
+	}
+	void SaveMark()
+	{
+		ofstream outfile;
+		char filename[30];
+		strcpy(filename, "D:\\");
+		strcat(filename, this->getName());
+		strcat(filename, "的成绩单.txt");
+		outfile.open(filename);
+		Mark temp = this->getMark();
+		outfile << this->getName() << "的成绩单：" << endl
+			<< "语文：" << temp.Chinese << endl
+			<< "数学：" << temp.Math << endl
+			<< "英语：" << temp.English << endl;
+		outfile.close();
 	}
 };
 int Student::num = 1;
@@ -157,6 +172,18 @@ public:
 	bool isempty()
 	{
 		return pHead == NULL;
+	}
+	void ShowAllMark()
+	{
+		StuNode *p = pHead;
+		while (p != NULL)
+		{
+			p->stu.ShowInf();
+			cout << "\t\t" << endl;
+			p->stu.ShowMark();
+			cout << endl;
+			p = p->pNext;
+		}
 	}
 	void add()
 	{
@@ -194,7 +221,8 @@ public:
 	{
 		if (pStuNode == NULL)
 		{
-			cout << "pStuNode参数为空！" << endl;
+			cout << "搜索不到此人，操作取消！" << endl;
+			system("pause");
 			return;
 		}
 		else if (pStuNode == pHead)
@@ -215,6 +243,8 @@ public:
 			delete pStuNode;
 			p = NULL;
 		}
+		cout << "删除成功！" << endl;
+		system("pause");
 	}
 	void DelFromName(char * name = NULL)
 	{
@@ -239,6 +269,7 @@ public:
 		while (p)
 		{
 			p->stu.ShowInf();
+			cout << endl;
 			p = p->pNext;
 		}
 	}
@@ -315,7 +346,7 @@ public:
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << endl << "授课：";
+		cout << "\t授课：";
 		cout << this->subject << endl;
 	}
 };
@@ -404,6 +435,8 @@ public:
 			delete pTeaNode;
 			p = NULL;
 		}
+		cout << "删除成功！" << endl;
+		system("pause");
 	}
 	void DelFromName(char *name=NULL)
 	{
@@ -678,15 +711,21 @@ int main()
 			{
 			case'a':cout << "查询自己的成绩" << endl;
 				((Student *)user)->ShowMark();
+				system("pause");
 				break;
 			case'b':cout << "查询全班成绩" << endl;
+				stulist.ShowAllMark();
 				system("pause");
 				break;
 			case'c':cout << "导出成绩" << endl;
+				((Student*)user)->SaveMark();
+				cout << "导出成功！" << endl;
 				system("pause");
 				break;
 			case'd':cout << "修改密码" << endl;
 				user->resetpassword();
+				cout << "密码修改成功！" << endl;
+				system("pause");
 				break;
 			case'q':cout << "退出系统" << endl;
 				savefile();
@@ -739,6 +778,8 @@ int main()
 				break;
 			case'h':cout << "修改密码" << endl;
 				user->resetpassword();
+				cout << "密码修改成功！" << endl;
+				system("pause");
 				break;
 			case'q':cout << "退出系统" << endl;
 				savefile();
@@ -782,6 +823,8 @@ int main()
 				break;
 			case'f':cout << "修改密码" << endl;
 				user->resetpassword();
+				cout << "密码修改成功！" << endl;
+				system("pause");
 				break;
 			case'q':cout << "退出系统" << endl;
 				savefile();
