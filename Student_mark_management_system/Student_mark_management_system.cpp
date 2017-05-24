@@ -35,7 +35,7 @@ public:
 		{
 			cout << "请输入新密码：" << endl;
 			cin.getline(Password, 30);
-			if (strcmp(Password, ""))
+			if (strcmp(Password, "")==0)
 			{
 				strcpy(Password, "0000");
 				cout << "密码不能为空，已设置为\"0000\"" << endl;
@@ -74,13 +74,17 @@ private:
 		int English;
 	}mark;
 	long ID;
-	static int num;	//已存学生个数
 public:
+	static int num;	//已存学生个数
 	Student(char * name = "NoName", char * password = "0000",long id=num,Mark mark = { 0,0,0 }) :People(name, password)
 	{
 		this->mark = mark;
 		ID = id;
 		num++;
+	}
+	~Student()
+	{
+		num--;
 	}
 	long getID()
 	{
@@ -311,7 +315,7 @@ public:
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << "授课：" << endl;
+		cout << endl << "授课：";
 		cout << this->subject << endl;
 	}
 };
@@ -484,7 +488,7 @@ void menu(logintype type)
 	switch (type)
 	{
 	case Nologin:
-		cout << "未登录" << endl;
+		cout << "请登陆系统" << endl;
 		break;
 	case Stu:
 		cout << "功能菜单：" << endl;
@@ -494,15 +498,15 @@ void menu(logintype type)
 		break;
 	case Tea:
 		cout << "功能菜单：" << endl;
-		cout << "a.录入(导入)学生成绩\t"<< "b.查询全班成绩\t\t" << endl
-			<< "c.成绩分析\t\t\t"<< "d.添加学生\t\t" << endl
-			<< "e.删除学生\t\t\t"<< "f.导出全班成绩\t\t" << endl
-			<< "g.修改密码\t\t" << endl
+		cout << "a.显示全班名单\t"<<"b.录入(导入)学生成绩"<< endl
+			<<"c.查询全班成绩\t\t" << "d.成绩分析\t\t\t"<< endl
+			<<"e.添加学生\t\t" << "f.删除学生\t\t\t"<<endl
+			<<"g.导出全班成绩\t\t" << "h.修改密码\t\t" << endl
 			<< "q.退出系统" << endl;
 		break;
 	case Adm:
 		cout << "功能菜单：" << endl;
-		cout <<"a.显示用户列表\t\t"<<"b.添加学生\t\t"<<endl
+		cout <<"a.显示用户列表\t"<<"b.添加学生\t\t"<<endl
 			<<"c.删除学生\t\t"<< "d.添加教师\t\t" << endl
 			<<"e.删除教师\t\t" << "f.修改密码\t\t"<<endl
 			<< "q.退出系统" << endl;
@@ -603,6 +607,7 @@ void loadfile()
 	}
 	delete stutemp;
 	delete teatemp;
+	Student::num--;
 	infile.read((char*)&admin, sizeof(admin));
 	infile.close();
 }
@@ -648,8 +653,8 @@ void savefile()
 
 int main()
 {
+	cout << "载入文件..." << endl;
 	loadfile();
-	system("pause");
 	menu(Nologin);
 	login();
 	system("pause");
@@ -684,6 +689,7 @@ int main()
 				user->resetpassword();
 				break;
 			case'q':cout << "退出系统" << endl;
+				savefile();
 				system("pause");
 				break;
 			default:
@@ -695,21 +701,25 @@ int main()
 		{
 			switch (choice)
 			{
-			case'a':cout << "导入成绩" << endl;
+			case'a':
+				stulist.ShowAll();
 				system("pause");
 				break;
-			case'b':cout << "查询全班成绩" << endl;
+			case'b':cout << "导入成绩" << endl;
 				system("pause");
 				break;
-			case'c':cout << "成绩分析" << endl;
+			case'c':cout << "查询全班成绩" << endl;
 				system("pause");
 				break;
-			case'd':
+			case'd':cout << "成绩分析" << endl;
+				system("pause");
+				break;
+			case'e':
 				cout << "添加学生" << endl;
 				stulist.add();
 				system("pause");
 				break;
-			case'e':cout << "删除学生" << endl;
+			case'f':cout << "删除学生" << endl;
 				cout << "a.通过名字查找学生\t\tb.通过学号查找学生" << endl;
 				char mode;
 				cin >> mode;
@@ -724,13 +734,14 @@ int main()
 				else
 					cout << "非法输入！" << endl;
 				break;
-			case'f':cout << "导出全班成绩" << endl;
+			case'g':cout << "导出全班成绩" << endl;
 				system("pause");
 				break;
-			case'g':cout << "修改密码" << endl;
+			case'h':cout << "修改密码" << endl;
 				user->resetpassword();
 				break;
 			case'q':cout << "退出系统" << endl;
+				savefile();
 				system("pause");
 				break;
 			default:
