@@ -183,6 +183,7 @@ public:
 	}
 	void ShowAllMark()
 	{
+		SortWithMark(stulist);
 		StuNode *p = pHead;
 		while (p != NULL)
 		{
@@ -270,7 +271,7 @@ public:
 	{
 		del(stulist.SearchID());
 	}
-	void Swap(StuNode *p1, StuNode *p2)
+	StuNode *Swap(StuNode *p1, StuNode *p2,bool FromMark=false)
 	{
 		StuNode *temp1;
 		StuNode *temp2;
@@ -325,6 +326,14 @@ public:
 			temp1->pNext = p2;
 			temp2->pNext = p1;
 		}
+		if (FromMark == false)
+		{
+			return p2;
+		}
+		else
+		{
+			return p1;
+		}
 	}
 	void ShowAll()
 	{
@@ -373,10 +382,98 @@ public:
 		cin >> id;
 		return SearchID(id);
 	}
+	double getClassChineseAverage()
+	{
+		StuNode *p = pHead;
+		double ChineseSum = 0;
+		int PeopleNum = 0;
+		while (p)
+		{
+			ChineseSum += p->stu.getMark().Chinese;
+			PeopleNum++;
+			p = p->pNext;
+		}
+		return ChineseSum / PeopleNum;
+	}
+	double getClassMathAverage()
+	{
+		StuNode *p = pHead;
+		double MathSum = 0;
+		int PeopleNum = 0;
+		while (p)
+		{
+			MathSum += p->stu.getMark().Math;
+			PeopleNum++;
+			p = p->pNext;
+		}
+		return MathSum / PeopleNum;
+	}
+	double getClassEnglishAverage()
+	{
+		StuNode *p = pHead;
+		double EnglishSum = 0;
+		int PeopleNum = 0;
+		while (p)
+		{
+			EnglishSum += p->stu.getMark().English;
+			PeopleNum++;
+			p = p->pNext;
+		}
+		return EnglishSum / PeopleNum;
+	}
+	double getClassChinesePassRate()
+	{
+		StuNode *p = pHead;
+		int PeopleNum = 0;
+		int PassPeople = 0;
+		while (p)
+		{
+			if (p->stu.getMark().Chinese >= 60)
+			{
+				PassPeople++;
+			}
+			PeopleNum++;
+			p = p->pNext;
+		}
+		return PassPeople/PeopleNum;
+	}
+	double getClassMathPassRate()
+	{
+		StuNode *p = pHead;
+		int PeopleNum = 0;
+		int PassPeople = 0;
+		while (p)
+		{
+			if (p->stu.getMark().Math >= 60)
+			{
+				PassPeople++;
+			}
+			PeopleNum++;
+			p = p->pNext;
+		}
+		return PassPeople / PeopleNum;
+	}
+	double getClassEnglishPassRate()
+	{
+		StuNode *p = pHead;
+		int PeopleNum = 0;
+		int PassPeople = 0;
+		while (p)
+		{
+			if (p->stu.getMark().English >= 60)
+			{
+				PassPeople++;
+			}
+			PeopleNum++;
+			p = p->pNext;
+		}
+		return PassPeople / PeopleNum;
+	}
 	friend void savefile();
 	friend void SaveAllMark();
 	friend void SortWithID(StuList & stulist);
 	friend void SortWithMark(StuList & stulist);
+	friend void SetStuMark(char * StuName);
 }stulist;
 
 class Teacher :public People
@@ -393,21 +490,6 @@ public:
 		else
 		{
 			cout << "subject参数为空！" << endl;
-		}
-	}
-	void LoadStuMark()
-	{
-
-	}
-	void SetStuMark(char * StuName=NULL)
-	{
-		if (StuName)
-		{
-			stulist.SearchName(StuName)->stu.SetStuMark();
-		}
-		else
-		{
-			cout << "根据学号从小到大录入" << endl;
 		}
 	}
 	virtual bool verify(char *password)
@@ -433,7 +515,14 @@ public:
 	{
 		cout << "全班成绩单:" << endl;
 		stulist.ShowAllMark();
-
+		cout << "班级平均分情况：" << endl;
+		cout << "语文：" << stulist.getClassChineseAverage() << "\t"
+			<< "数学：" << stulist.getClassMathAverage() << "\t"
+			<< "英语：" << stulist.getClassEnglishAverage() << endl;
+		cout << "班级及格率：" << endl;
+		cout << "语文：" << stulist.getClassChinesePassRate() * 100 << "%\t"
+			<< "数学：" << stulist.getClassMathPassRate() * 100 << "%\t"
+			<< "英语：" << stulist.getClassEnglishPassRate() * 100 << "%\t" << endl;
 	}
 	virtual void ShowInf()const
 	{
@@ -599,8 +688,7 @@ void menu(logintype state);					//显示菜单函数
 void login();					//登陆函数
 void SortWithID(StuList & stulist);
 void SortWithMark(StuList & stulist);
-void encrypt();				//加密函数
-void decrypt();				//解密函数
+void SetStuMark(char * StuName = NULL);
 void loadfile();				//载入文件函数
 void SaveAllMark();		//导出学生成绩单函数
 
@@ -626,7 +714,7 @@ void menu(logintype type)
 		break;
 	case Tea:
 		cout << "功能菜单：" << endl;
-		cout << "a.显示全班名单\t"<<"b.录入(导入)学生成绩"<< endl
+		cout << "a.显示全班名单\t"<<"b.录入学生成绩"<< endl
 			<<"c.查询全班成绩\t\t" << "d.成绩分析\t\t\t"<< endl
 			<<"e.添加学生\t\t" << "f.删除学生\t\t\t"<<endl
 			<<"g.导出全班成绩\t\t" << "h.修改密码\t\t" << endl
@@ -715,7 +803,7 @@ void login()
  
 void SortWithID(StuList & stulist)
 {
-	int count = 0;
+	/*选择排序法*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
 		StuNode *min = p1;
@@ -723,38 +811,53 @@ void SortWithID(StuList & stulist)
 		{
 			if (p1->stu.getID() > p2->stu.getID())
 			{
-				stulist.Swap(p1, p2);
-				/*由于交换位置，必须重新遍历链表*/
-				p1 = stulist.pHead;
-				for (int i = count++; i > 0; i--)
-				{
-					p1 = p1->pNext;
-				}
-				/*结束*/
+				min = p2;
 			}
+		}
+		if (min != p1)
+		{
+			p1 = stulist.Swap(p1, min);	/*链表元素交换后，要重新确定当前确定好的小的元素*/
 		}
 	}
 }
 
 void SortWithMark(StuList & stulist)
 {
-	int count = 0;
+	/*选择排序法*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
 		StuNode *min = p1;
 		for (StuNode * p2 = p1->pNext; p2 != NULL; p2 = p2->pNext)
 		{
-			if (p1->stu.getSumMark() > p2->stu.getSumMark())
+			if (p1->stu.getSumMark() < p2->stu.getSumMark())
 			{
-				stulist.Swap(p1, p2);
-				/*由于交换位置，必须重新遍历链表*/
-				p1 = stulist.pHead;
-				for (int i = count++; i > 0; i--)
-				{
-					p1 = p1->pNext;
-				}
-				/*结束*/
+				min = p2;
 			}
+		}
+		if (min != p1)
+		{
+			p1 = stulist.Swap(p1, min,true);	/*链表元素交换后，要重新确定当前确定好的大的元素*/
+		}
+	}
+}
+
+void SetStuMark(char * StuName)
+{
+	if (StuName)
+	{
+		stulist.SearchName(StuName)->stu.SetStuMark();
+	}
+	else
+	{
+		cout << "根据学号从小到大录入" << endl;
+		SortWithID(stulist);
+		StuNode *p = stulist.pHead;
+		while (p)
+		{
+			p->stu.ShowInf();
+			cout << endl;
+			p->stu.SetStuMark();
+			p = p->pNext;
 		}
 	}
 }
@@ -839,15 +942,23 @@ void SaveAllMark()
 		system("pause");
 		return;
 	}
-	outfile << "学号\t" << "姓名\t" << "语文\t" << "数学\t" << "英语\t" << endl;
+	outfile << "学号\t" << "姓名\t" << "语文\t" << "数学\t" << "英语\t"<< "总分\t" << endl;
+	SortWithMark(stulist);
 	StuNode *p = stulist.pHead;
+	while (p)
+	{
+		outfile << p->stu.getID() << "\t" << p->stu.getName() << "\t"
+			<< p->stu.getMark().Chinese << "\t" << p->stu.getMark().Math << "\t" << p->stu.getMark().English << "\t"
+			<< p->stu.getSumMark() << endl;
+		p = p->pNext;
+	}
 }
 
 int main()
 {
 	cout << "载入文件..." << endl;
 	loadfile();
-	//SortWithID(stulist);
+	SortWithID(stulist);
 	menu(Nologin);
 	login();
 	system("pause");
@@ -878,6 +989,7 @@ int main()
 				system("pause");
 				break;
 			case'c':cout << "导出成绩" << endl;
+				SortWithMark(stulist);
 				((Student*)user)->SaveMark();
 				cout << "导出成功！" << endl;
 				system("pause");
@@ -901,15 +1013,17 @@ int main()
 			switch (choice)
 			{
 			case'a':
+				SortWithID(stulist);
 				stulist.ShowAll();
 				system("pause");
 				break;
-			case'b':cout << "导入成绩" << endl;
-				((Teacher*)user)->LoadStuMark();
+			case'b':cout << "录入成绩" << endl;
+				SetStuMark();
 				system("pause");
 				break;
 			case'c':cout << "查询全班成绩" << endl;
 				stulist.ShowAllMark();
+				system("pause");
 				break;
 			case'd':cout << "成绩分析" << endl;
 				((Teacher*)user)->ShowMarkAnalyze();
@@ -936,6 +1050,8 @@ int main()
 					cout << "非法输入！" << endl;
 				break;
 			case'g':cout << "导出全班成绩" << endl;
+				SortWithMark(stulist);
+				SaveAllMark();
 				system("pause");
 				break;
 			case'h':cout << "修改密码" << endl;
@@ -957,6 +1073,7 @@ int main()
 			switch (choice)
 			{
 			case'a':cout << "显示用户列表" << endl;
+				SortWithID(stulist);
 				admin.ShowAll();
 				break;
 			case'b':cout << "添加学生" << endl;
