@@ -39,6 +39,7 @@ public:
 			{
 				strcpy(Password, "0000");
 				cout << "密码不能为空，已设置为\"0000\"" << endl;
+				system("pause");
 			}
 		}
 	}
@@ -84,7 +85,6 @@ public:
 	}
 	~Student()
 	{
-		num--;
 	}
 	long getID()
 	{
@@ -102,6 +102,14 @@ public:
 		cout << "请连续输入语文成绩，数学成绩和英语成绩：" << endl;
 		cin >> Chinese >> Math >> English;
 		SetStuMark(Chinese, Math, English);
+	}
+	int getSumMark()
+	{
+		return mark.Chinese + mark.Math + mark.English;
+	}
+	double getAverageMark()
+	{
+		return getSumMark() / 3.0;
 	}
 	virtual bool verify(char *password)
 	{
@@ -200,6 +208,12 @@ public:
 		}
 		cout << "请输入学生名字：" << endl;
 		cin.getline(p->stu.getName(), 30);
+		if (*(p->stu.getName())=='\0')
+		{
+			cout << "账户名不能为空，操作取消！" << endl;
+			stulist.del(p);
+			return;
+		}
 		p->stu.resetpassword();
 	}
 	void add(Student &stu)
@@ -243,8 +257,6 @@ public:
 			delete pStuNode;
 			p = NULL;
 		}
-		cout << "删除成功！" << endl;
-		system("pause");
 	}
 	void DelFromName(char * name = NULL)
 	{
@@ -257,6 +269,62 @@ public:
 	void DelFromID()
 	{
 		del(stulist.SearchID());
+	}
+	void Swap(StuNode *p1, StuNode *p2)
+	{
+		StuNode *temp1;
+		StuNode *temp2;
+		for (temp1 = pHead; temp1 != NULL&&temp1->pNext != p1; temp1 = temp1->pNext)	//寻找p1前的节点的指针
+		{
+			continue;
+		}
+		for (temp2 = pHead; temp2 != NULL&&temp2->pNext != p2; temp2 = temp2->pNext)	//寻找p2前的节点的指针
+		{
+			continue;
+		}
+		if (temp1 == NULL&&temp2!=NULL)
+		{
+			if (p1 == pHead)		//p1是头结点
+			{
+				StuNode *temp = p2->pNext;		//备份
+				pHead = p2;
+
+				if (p1->pNext == p2)		//相邻
+				{
+					p2->pNext = p1;
+				}
+				else																//不相邻
+				{
+					p2->pNext = p1->pNext;
+					temp2->pNext = p1;
+				}
+				p1->pNext = temp;
+			}
+		}
+		else if (temp2 == NULL&&temp1!=NULL)
+		{
+			if (p2 == pHead)		//p2是头结点
+			{
+				StuNode *temp = p1->pNext;		//备份
+				pHead = p1;
+
+				if (p1->pNext == p2)		//相邻
+				{
+					p1->pNext = p2;
+				}
+				else									//不相邻
+				{
+					p1->pNext = p2->pNext;
+					temp1->pNext = p2;
+				}
+				p2->pNext = temp;
+			}
+		}
+		else
+		{
+			temp1->pNext = p2;
+			temp2->pNext = p1;
+		}
 	}
 	void ShowAll()
 	{
@@ -306,6 +374,9 @@ public:
 		return SearchID(id);
 	}
 	friend void savefile();
+	friend void SaveAllMark();
+	friend void SortWithID(StuList & stulist);
+	friend void SortWithMark(StuList & stulist);
 }stulist;
 
 class Teacher :public People
@@ -323,6 +394,10 @@ public:
 		{
 			cout << "subject参数为空！" << endl;
 		}
+	}
+	void LoadStuMark()
+	{
+
 	}
 	void SetStuMark(char * StuName=NULL)
 	{
@@ -342,6 +417,23 @@ public:
 	virtual void resetpassword(char *newpassword=NULL)
 	{
 		People::resetpassword(newpassword);
+	}
+	void LoadAllMark()
+	{
+		ifstream infile;
+		infile.open("D:\\全班成绩.txt");	//尝试打开
+		if (infile.good() == false)
+		{
+			cout << "文件不存在，操作取消！" << endl;
+			system("pause");
+			return;
+		}
+	}
+	void ShowMarkAnalyze()
+	{
+		cout << "全班成绩单:" << endl;
+		stulist.ShowAllMark();
+
 	}
 	virtual void ShowInf()const
 	{
@@ -505,9 +597,12 @@ public:
 
 void menu(logintype state);					//显示菜单函数
 void login();					//登陆函数
+void SortWithID(StuList & stulist);
+void SortWithMark(StuList & stulist);
 void encrypt();				//加密函数
 void decrypt();				//解密函数
 void loadfile();				//载入文件函数
+void SaveAllMark();		//导出学生成绩单函数
 
 void menu(logintype type)
 {
@@ -617,29 +712,79 @@ void login()
 	cout << "错误次数过多，登录失败！" << endl;
 	state=Nologin;
 }
+ 
+void SortWithID(StuList & stulist)
+{
+	int count = 0;
+	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
+	{
+		StuNode *min = p1;
+		for (StuNode * p2 = p1->pNext; p2!=NULL;p2 = p2->pNext)
+		{
+			if (p1->stu.getID() > p2->stu.getID())
+			{
+				stulist.Swap(p1, p2);
+				/*由于交换位置，必须重新遍历链表*/
+				p1 = stulist.pHead;
+				for (int i = count++; i > 0; i--)
+				{
+					p1 = p1->pNext;
+				}
+				/*结束*/
+			}
+		}
+	}
+}
+
+void SortWithMark(StuList & stulist)
+{
+	int count = 0;
+	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
+	{
+		StuNode *min = p1;
+		for (StuNode * p2 = p1->pNext; p2 != NULL; p2 = p2->pNext)
+		{
+			if (p1->stu.getSumMark() > p2->stu.getSumMark())
+			{
+				stulist.Swap(p1, p2);
+				/*由于交换位置，必须重新遍历链表*/
+				p1 = stulist.pHead;
+				for (int i = count++; i > 0; i--)
+				{
+					p1 = p1->pNext;
+				}
+				/*结束*/
+			}
+		}
+	}
+}
 
 void loadfile()
 {
 	ifstream infile;
 	infile.open("D:\\userlist.data",ios_base::binary|ios_base::in);
+	if (infile.good() == false)
+	{
+		cout << "文件不存在，操作取消！" << endl;
+		system("pause");
+		return;
+	}
 	/*读取个数*/
 	int StuSum = 0, TeaSum = 0;
 	infile.read((char*)&StuSum, sizeof(int));
 	infile.read((char*)&TeaSum, sizeof(int));
-	Student *stutemp = new Student;
-	Teacher *teatemp = new Teacher;
+	Student stutemp;
+	Teacher teatemp;
 	for (; StuSum > 0; StuSum--)
 	{
-		infile.read((char*)stutemp, sizeof(StuNode) - sizeof(StuNode*));
-		stulist.add(*stutemp);
+		infile.read((char*)&stutemp, sizeof(StuNode) - sizeof(StuNode*));
+		stulist.add(stutemp);
 	}
 	for (; TeaSum > 0; TeaSum--)
 	{
-		infile.read((char*)teatemp, sizeof(TeaNode) - sizeof(TeaNode*));
-		tealist.add(*teatemp);
+		infile.read((char*)&teatemp, sizeof(TeaNode) - sizeof(TeaNode*));
+		tealist.add(teatemp);
 	}
-	delete stutemp;
-	delete teatemp;
 	Student::num--;
 	infile.read((char*)&admin, sizeof(admin));
 	infile.close();
@@ -684,10 +829,25 @@ void savefile()
 	outfile.close();
 }
 
+void SaveAllMark()
+{
+	ofstream outfile;
+	outfile.open("D:\\全班成绩.txt");
+	if (outfile.good() == false)
+	{
+		cout << "未知错误，保存失败" << endl;
+		system("pause");
+		return;
+	}
+	outfile << "学号\t" << "姓名\t" << "语文\t" << "数学\t" << "英语\t" << endl;
+	StuNode *p = stulist.pHead;
+}
+
 int main()
 {
 	cout << "载入文件..." << endl;
 	loadfile();
+	//SortWithID(stulist);
 	menu(Nologin);
 	login();
 	system("pause");
@@ -745,12 +905,14 @@ int main()
 				system("pause");
 				break;
 			case'b':cout << "导入成绩" << endl;
+				((Teacher*)user)->LoadStuMark();
 				system("pause");
 				break;
 			case'c':cout << "查询全班成绩" << endl;
-				system("pause");
+				stulist.ShowAllMark();
 				break;
 			case'd':cout << "成绩分析" << endl;
+				((Teacher*)user)->ShowMarkAnalyze();
 				system("pause");
 				break;
 			case'e':
