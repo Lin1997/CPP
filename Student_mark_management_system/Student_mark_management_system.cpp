@@ -130,9 +130,11 @@ public:
 	}
 	void ShowMark()
 	{
-		cout << "语文：" << mark.Chinese << endl
-			<< "数学：" << mark.Math << endl
-			<< "英语：" << mark.English << endl;
+		cout << "语文：" << mark.Chinese << "\t"
+			<<"数学：" << mark.Math << "\t"
+			<< "英语：" << mark.English <<"\t" << endl;
+		cout << "总分" << this->getSumMark() << "\t"
+			<< "平均分" << this->getAverageMark() << endl;
 	}
 	void SaveMark()
 	{
@@ -146,7 +148,9 @@ public:
 		outfile << this->getName() << "的成绩单：" << endl
 			<< "语文：" << temp.Chinese << endl
 			<< "数学：" << temp.Math << endl
-			<< "英语：" << temp.English << endl;
+			<< "英语：" << temp.English << endl
+			<< "总分：" << this->getSumMark() << endl
+			<< "平均分：" << this->getAverageMark() << endl;
 		outfile.close();
 	}
 };
@@ -251,7 +255,7 @@ public:
 		else
 		{
 			StuNode *p = pHead;
-			while (p->pNext != pStuNode)
+			while (p->pNext != pStuNode)		//找到前一个节点
 			{
 				p = p->pNext;
 			}
@@ -267,10 +271,12 @@ public:
 	void DelFromID(long id)
 	{
 		del(stulist.SearchID(id));
+		system("pause");
 	}
 	void DelFromID()
 	{
 		del(stulist.SearchID());
+		system("pause");
 	}
 	StuNode *Swap(StuNode *p1, StuNode *p2,bool FromMark=false)
 	{
@@ -337,7 +343,7 @@ public:
 				StuNode *temp = p2->pNext;	//备份
 
 				temp1->pNext = p2;
-				p2->pNext = temp2;
+				p2->pNext = p1->pNext;
 				temp2->pNext = p1;
 				p1->pNext = temp;
 			}
@@ -451,7 +457,7 @@ public:
 			PeopleNum++;
 			p = p->pNext;
 		}
-		return PassPeople/PeopleNum;
+		return (double)PassPeople/(double)PeopleNum;
 	}
 	double getClassMathPassRate()
 	{
@@ -467,7 +473,7 @@ public:
 			PeopleNum++;
 			p = p->pNext;
 		}
-		return PassPeople / PeopleNum;
+		return (double)PassPeople / (double)PeopleNum;
 	}
 	double getClassEnglishPassRate()
 	{
@@ -483,7 +489,7 @@ public:
 			PeopleNum++;
 			p = p->pNext;
 		}
-		return PassPeople / PeopleNum;
+		return (double)PassPeople / (double)PeopleNum;
 	}
 	friend void savefile();
 	friend void SaveAllMark();
@@ -740,7 +746,7 @@ void menu(logintype type)
 		cout << "功能菜单：" << endl;
 		cout << "a.查询自己的成绩\t\t"<< "b.查询全班成绩\t\t" << endl
 			<< "c.导出成绩\t\t\t"<< "d.修改密码\t\t" << endl
-			<< "q.退出系统" << endl;
+			<< "q.保存数据并退出系统" << endl;
 		break;
 	case Tea:
 		cout << "功能菜单：" << endl;
@@ -748,14 +754,14 @@ void menu(logintype type)
 			<<"c.查询全班成绩\t\t" << "d.成绩分析\t\t\t"<< endl
 			<<"e.添加学生\t\t" << "f.删除学生\t\t\t"<<endl
 			<<"g.导出全班成绩\t\t" << "h.修改密码\t\t" << endl
-			<< "q.退出系统" << endl;
+			<< "q.保存数据并退出系统" << endl;
 		break;
 	case Adm:
 		cout << "功能菜单：" << endl;
 		cout <<"a.显示用户列表\t"<<"b.添加学生\t\t"<<endl
 			<<"c.删除学生\t\t"<< "d.添加教师\t\t" << endl
 			<<"e.删除教师\t\t" << "f.修改密码\t\t"<<endl
-			<< "q.退出系统" << endl;
+			<< "q.保存数据并退出系统" << endl;
 		break;
 	default:
 		cout << "type参数错误！" << endl;
@@ -843,7 +849,7 @@ void SortWithID(StuList & stulist)
 		StuNode *min = p1;
 		for (StuNode * p2 = p1->pNext; p2!=NULL;p2 = p2->pNext)
 		{
-			if (p1->stu.getID() > p2->stu.getID())
+			if (min->stu.getID() > p2->stu.getID())
 			{
 				min = p2;
 			}
@@ -864,17 +870,17 @@ void SortWithMark(StuList & stulist)
 	/*选择排序法*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
-		StuNode *min = p1;
+		StuNode *max = p1;
 		for (StuNode * p2 = p1->pNext; p2 != NULL; p2 = p2->pNext)
 		{
-			if (p1->stu.getSumMark() < p2->stu.getSumMark())
+			if (max->stu.getID() > p2->stu.getID())
 			{
-				min = p2;
+				max = p2;
 			}
 		}
-		if (min != p1)
+		if (max != p1)
 		{
-			p1 = stulist.Swap(p1, min,true);	/*链表元素交换后，要重新确定当前确定好的大的元素*/
+			p1 = stulist.Swap(p1, max);	/*链表元素交换后，要重新确定当前确定好的小的元素*/
 		}
 	}
 }
@@ -1017,26 +1023,31 @@ int main()
 		{
 			switch (choice)
 			{
-			case'a':cout << "查询自己的成绩" << endl;
+			case'a':
+				system("cls");
 				((Student *)user)->ShowMark();
 				system("pause");
 				break;
-			case'b':cout << "查询全班成绩" << endl;
+			case'b':
+				system("cls");
+				SortWithMark(stulist);
 				stulist.ShowAllMark();
 				system("pause");
 				break;
-			case'c':cout << "导出成绩" << endl;
+			case'c':
+				system("cls");
 				SortWithMark(stulist);
 				((Student*)user)->SaveMark();
 				cout << "导出成功！" << endl;
 				system("pause");
 				break;
-			case'd':cout << "修改密码" << endl;
+			case'd':
+				system("cls");
 				user->resetpassword();
 				cout << "密码修改成功！" << endl;
 				system("pause");
 				break;
-			case'q':cout << "退出系统" << endl;
+			case'q':
 				savefile();
 				system("pause");
 				break;
@@ -1050,28 +1061,34 @@ int main()
 			switch (choice)
 			{
 			case'a':
+				system("cls");
 				SortWithID(stulist);
 				stulist.ShowAll();
 				system("pause");
 				break;
-			case'b':cout << "录入成绩" << endl;
+			case'b':
+				system("cls");
 				SetStuMark();
 				system("pause");
 				break;
-			case'c':cout << "查询全班成绩" << endl;
+			case'c':
+				system("cls");
+				SortWithMark(stulist);
 				stulist.ShowAllMark();
 				system("pause");
 				break;
-			case'd':cout << "成绩分析" << endl;
+			case'd':
+				system("cls");
 				((Teacher*)user)->ShowMarkAnalyze();
 				system("pause");
 				break;
 			case'e':
-				cout << "添加学生" << endl;
+				system("cls");
 				stulist.add();
 				system("pause");
 				break;
-			case'f':cout << "删除学生" << endl;
+			case'f':
+				system("cls");
 				cout << "a.通过名字查找学生\t\tb.通过学号查找学生" << endl;
 				char mode;
 				cin >> mode;
@@ -1086,17 +1103,19 @@ int main()
 				else
 					cout << "非法输入！" << endl;
 				break;
-			case'g':cout << "导出全班成绩" << endl;
+			case'g':
+				system("cls");
 				SortWithMark(stulist);
 				SaveAllMark();
 				system("pause");
 				break;
-			case'h':cout << "修改密码" << endl;
+			case'h':
+				system("cls");
 				user->resetpassword();
 				cout << "密码修改成功！" << endl;
 				system("pause");
 				break;
-			case'q':cout << "退出系统" << endl;
+			case'q':cout << "保存数据并退出系统" << endl;
 				savefile();
 				system("pause");
 				break;
@@ -1109,15 +1128,17 @@ int main()
 		{
 			switch (choice)
 			{
-			case'a':cout << "显示用户列表" << endl;
+			case'a':
+				system("cls");
 				SortWithID(stulist);
 				admin.ShowAll();
 				break;
-			case'b':cout << "添加学生" << endl;
+			case'b':
 				system("cls");
 				stulist.add();
 				break;
-			case'c':cout << "删除学生" << endl;
+			case'c':
+				system("cls");
 				cout << "a.通过名字查找学生\t\tb.通过学号查找学生" << endl;
 				char mode;
 				cin >> mode;
@@ -1126,24 +1147,36 @@ int main()
 					continue;
 				}
 				if (mode == 'a')
+				{
 					stulist.DelFromName();
+					system("pause");
+				}
 				else if (mode == 'b')
+				{
 					stulist.DelFromID();
+					system("pause");
+				}
 				else
+				{
 					cout << "非法输入！" << endl;
+					system("pause");
+				}
 				break;
-			case'd':cout << "添加教师" << endl;
+			case'd':
+				system("cls");
 				tealist.add();
 				break;
-			case'e':cout << "删除教师" << endl;
+			case'e':
+				system("cls");
 				tealist.DelFromName();
 				break;
-			case'f':cout << "修改密码" << endl;
+			case'f':
+				system("cls");
 				user->resetpassword();
 				cout << "密码修改成功！" << endl;
 				system("pause");
 				break;
-			case'q':cout << "退出系统" << endl;
+			case'q':cout << "保存数据并退出系统" << endl;
 				savefile();
 				system("pause");
 				break;
