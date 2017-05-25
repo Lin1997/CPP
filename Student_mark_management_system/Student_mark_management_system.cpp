@@ -738,7 +738,7 @@ void login()
 	char password[30];
 	if (stulist.isempty() && tealist.isempty())
 	{
-		cout << "老师列表和学生列表都为空，请以管理员账户登陆。" << endl;
+		cout << "老师列表和学生列表都为空，请以管理员账户登陆。(默认账户:admin 默认密码:0000)" << endl;
 	}
 	for (int i = 2; i >= 0; i--)
 	{
@@ -958,7 +958,6 @@ int main()
 {
 	cout << "载入文件..." << endl;
 	loadfile();
-	SortWithID(stulist);
 	menu(Nologin);
 	login();
 	system("pause");
