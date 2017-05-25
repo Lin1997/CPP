@@ -213,6 +213,7 @@ public:
 		{
 			cout << "账户名不能为空，操作取消！" << endl;
 			stulist.del(p);
+			Student::num--;
 			return;
 		}
 		p->stu.resetpassword();
@@ -323,8 +324,23 @@ public:
 		}
 		else
 		{
-			temp1->pNext = p2;
-			temp2->pNext = p1;
+			if (p1->pNext == p2 || p2->pNext == p1)		//相邻
+			{
+				StuNode *temp = p2->pNext;	//备份
+				
+				p2->pNext = temp1->pNext;
+				temp1->pNext = p2;
+				p1->pNext = temp;
+			}
+			else														//不相邻
+			{
+				StuNode *temp = p2->pNext;	//备份
+
+				temp1->pNext = p2;
+				p2->pNext = temp2;
+				temp2->pNext = p1;
+				p1->pNext = temp;
+			}
 		}
 		if (FromMark == false)
 		{
@@ -500,6 +516,18 @@ public:
 	{
 		People::resetpassword(newpassword);
 	}
+	void SetSubject(char * subject=NULL)
+	{
+		if (subject == NULL)
+		{
+			cout << "请输入教师教授科目：" << endl;
+			cin.getline(this->subject, 10);
+		}
+		else
+		{
+			strcpy(this->subject, subject);
+		}
+	}
 	void LoadAllMark()
 	{
 		ifstream infile;
@@ -575,6 +603,7 @@ public:
 		cout << "请输入教师名字：" << endl;
 		cin.getline(p->tea.getName(), 30);
 		p->tea.resetpassword();
+		p->tea.SetSubject();
 	}
 	void add(Teacher &tea)
 	{
@@ -674,6 +703,7 @@ public:
 	}
 	void ShowAll()
 	{
+		system("cls");
 		cout << "学生列表：" << endl;
 		stulist.ShowAll();
 		cout << endl;
@@ -803,6 +833,10 @@ void login()
  
 void SortWithID(StuList & stulist)
 {
+	if (stulist.pHead == NULL)
+	{
+		return;
+	}
 	/*选择排序法*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
@@ -823,6 +857,10 @@ void SortWithID(StuList & stulist)
 
 void SortWithMark(StuList & stulist)
 {
+	if (stulist.pHead == NULL)
+	{
+		return;
+	}
 	/*选择排序法*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
@@ -868,7 +906,7 @@ void loadfile()
 	infile.open("D:\\userlist.data",ios_base::binary|ios_base::in);
 	if (infile.good() == false)
 	{
-		cout << "文件不存在，操作取消！" << endl;
+		cout << "文件不存在，无载入数据！" << endl;
 		system("pause");
 		return;
 	}
@@ -956,7 +994,7 @@ void SaveAllMark()
 
 int main()
 {
-	cout << "载入文件..." << endl;
+	cout << "尝试载入文件..." << endl;
 	loadfile();
 	menu(Nologin);
 	login();
@@ -1076,6 +1114,7 @@ int main()
 				admin.ShowAll();
 				break;
 			case'b':cout << "添加学生" << endl;
+				system("cls");
 				stulist.add();
 				break;
 			case'c':cout << "删除学生" << endl;
