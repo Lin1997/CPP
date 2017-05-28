@@ -6,7 +6,7 @@
 using namespace std;
 
 enum logintype { Nologin, Stu, Tea, Adm };				//登陆状态
-class People;		//向前声明
+class People;		//向前声明，为了声明下面的People指针
 People * user = NULL;												//当前用户
 logintype state = Nologin;
 
@@ -25,7 +25,7 @@ public:
 	{
 		return !strcmp(input, Password);
 	}
-	virtual void resetpassword(char * newpassword=NULL)
+	void resetpassword(char * newpassword=NULL)
 	{
 		if (newpassword)
 		{
@@ -77,9 +77,11 @@ private:
 	long ID;
 public:
 	static int num;	//已存学生个数
-	Student(char * name = "NoName", char * password = "0000",long id=num,Mark mark = { 0,0,0 }) :People(name, password)
+	Student(char * name = "NoName", char * password = "0000",long id=num,int Chinese=0,int Math=0,int English=0) :People(name, password)
 	{
-		this->mark = mark;
+		mark.Chinese = Chinese;
+		mark.English = English;
+		mark.Math = Math;
 		ID = id;
 		num++;
 	}
@@ -114,10 +116,6 @@ public:
 	virtual bool verify(char *password)
 	{
 		return People::verify(password);
-	}
-	virtual void resetpassword(char * newpassword=NULL)
-	{
-		People::resetpassword(newpassword);
 	}
 	virtual void ShowInf()const
 	{
@@ -518,10 +516,6 @@ public:
 	{
 		return People::verify(password);
 	}
-	virtual void resetpassword(char *newpassword=NULL)
-	{
-		People::resetpassword(newpassword);
-	}
 	void SetSubject(char * subject=NULL)
 	{
 		if (subject == NULL)
@@ -543,6 +537,25 @@ public:
 			cout << "文件不存在，操作取消！" << endl;
 			system("pause");
 			return;
+		}
+	}
+	void ResetStuMark()
+	{
+		cout << "修改哪位学生的成绩？" << endl;
+		cout<<"a.通过学号搜索\t\t"<<"b.通过名字搜索\t\t" << endl;
+		char choice;
+		cin >> choice;
+		if (choice == 'a')
+		{
+			stulist.SearchID()->stu.SetStuMark();
+		}
+		else if (choice == 'b')
+		{
+			stulist.SearchName()->stu.SetStuMark();
+		}
+		else
+		{
+			cout << "非法输入，操作取消！" << endl;
 		}
 	}
 	void ShowMarkAnalyze()
@@ -699,10 +712,6 @@ public:
 	Admin(char * name = "admin", char * password = "0000") :People(name, password)
 	{
 	}
-	virtual void resetpassword(char *newpassword=NULL)
-	{
-		People::resetpassword(newpassword);
-	}
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
@@ -722,10 +731,11 @@ public:
 
 void menu(logintype state);					//显示菜单函数
 void login();					//登陆函数
-void SortWithID(StuList & stulist);
-void SortWithMark(StuList & stulist);
+void SortWithID(StuList & stulist);			//按学号排序函数
+void SortWithMark(StuList & stulist);		//按成绩排序函数
 void SetStuMark(char * StuName = NULL);
-void loadfile();				//载入文件函数
+void loadfile();				//从文件载入数据函数
+void savefile();				//保存数据到文件函数
 void SaveAllMark();		//导出学生成绩单函数
 
 void menu(logintype type)
@@ -751,10 +761,10 @@ void menu(logintype type)
 	case Tea:
 		cout << "功能菜单：" << endl;
 		cout << "a.显示全班名单\t"<<"b.录入学生成绩"<< endl
-			<<"c.查询全班成绩\t\t" << "d.成绩分析\t\t\t"<< endl
-			<<"e.添加学生\t\t" << "f.删除学生\t\t\t"<<endl
-			<<"g.导出全班成绩\t\t" << "h.修改密码\t\t" << endl
-			<< "q.保存数据并退出系统" << endl;
+			<<"c.修改学生成绩\t\t"<<"d.查询全班成绩\t\t" <<endl
+			<< "e.成绩分析\t\t\t"<<"f.添加学生\t\t" <<endl
+			<< "g.删除学生\t\t\t"<<"h.导出全班成绩\t\t" <<endl
+			<< "i.修改密码\t\t" << "q.保存数据并退出系统" << endl;
 		break;
 	case Adm:
 		cout << "功能菜单：" << endl;
@@ -823,7 +833,7 @@ void login()
 				cout << "登陆成功：" << endl;
 				cout << "当前账户：" << admin.getName() << "(管理员)" << endl;
 				state = Adm;
-				user = &admin;
+				user = (Admin*)&admin;
 				return;
 			}
 			else
@@ -873,7 +883,7 @@ void SortWithMark(StuList & stulist)
 		StuNode *max = p1;
 		for (StuNode * p2 = p1->pNext; p2 != NULL; p2 = p2->pNext)
 		{
-			if (max->stu.getID() > p2->stu.getID())
+			if (max->stu.getSumMark() < p2->stu.getSumMark())
 			{
 				max = p2;
 			}
@@ -1072,22 +1082,27 @@ int main()
 				system("pause");
 				break;
 			case'c':
+				system("pause");
+				((Teacher *)user)->ResetStuMark();
+				system("pause");
+				break;
+			case'd':
 				system("cls");
 				SortWithMark(stulist);
 				stulist.ShowAllMark();
 				system("pause");
 				break;
-			case'd':
+			case'e':
 				system("cls");
 				((Teacher*)user)->ShowMarkAnalyze();
 				system("pause");
 				break;
-			case'e':
+			case'f':
 				system("cls");
 				stulist.add();
 				system("pause");
 				break;
-			case'f':
+			case'g':
 				system("cls");
 				cout << "a.通过名字查找学生\t\tb.通过学号查找学生" << endl;
 				char mode;
@@ -1103,13 +1118,13 @@ int main()
 				else
 					cout << "非法输入！" << endl;
 				break;
-			case'g':
+			case'h':
 				system("cls");
 				SortWithMark(stulist);
 				SaveAllMark();
 				system("pause");
 				break;
-			case'h':
+			case'i':
 				system("cls");
 				user->resetpassword();
 				cout << "密码修改成功！" << endl;
@@ -1173,7 +1188,6 @@ int main()
 			case'f':
 				system("cls");
 				user->resetpassword();
-				cout << "密码修改成功！" << endl;
 				system("pause");
 				break;
 			case'q':cout << "保存数据并退出系统" << endl;
