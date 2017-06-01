@@ -138,8 +138,7 @@ public:
 	{
 		ofstream outfile;
 		char filename[30];
-		strcpy(filename, "D:\\");
-		strcat(filename, this->getName());
+		strcpy(filename, this->getName());
 		strcat(filename, "的成绩单.txt");
 		outfile.open(filename);
 		Mark temp = this->getMark();
@@ -150,6 +149,7 @@ public:
 			<< "总分：" << this->getSumMark() << endl
 			<< "平均分：" << this->getAverageMark() << endl;
 		outfile.close();
+		cout << "导出成功！请到程序根目录下寻找文件" << endl;
 	}
 };
 int Student::num = 1;
@@ -198,27 +198,31 @@ public:
 	}
 	void add()
 	{
-		StuNode * p = new StuNode;
-		if (pHead == NULL)
+		while (1)
 		{
-			pHead = p;
-			pHead->pNext = NULL;
+			StuNode * p = new StuNode;
+			if (pHead == NULL)
+			{
+				pHead = p;
+				pHead->pNext = NULL;
+			}
+			else
+			{
+				p->pNext = pHead;
+				pHead = p;
+			}
+			cout << "请输入学生名字(直接敲击回车停止添加)：" << endl;
+			cin.getline(p->stu.getName(), 30);
+			if (*(p->stu.getName()) == '\0')
+			{
+				cout << "账户名为空，停止添加" << endl;
+				stulist.del(p);
+				Student::num--;
+				system("pause");
+				return;
+			}
+			p->stu.resetpassword();
 		}
-		else
-		{
-			p->pNext = pHead;
-			pHead = p;
-		}
-		cout << "请输入学生名字：" << endl;
-		cin.getline(p->stu.getName(), 30);
-		if (*(p->stu.getName())=='\0')
-		{
-			cout << "账户名不能为空，操作取消！" << endl;
-			stulist.del(p);
-			Student::num--;
-			return;
-		}
-		p->stu.resetpassword();
 	}
 	void add(Student &stu)
 	{
@@ -235,13 +239,12 @@ public:
 		}
 		p->stu = stu;
 	}
-	void del(StuNode * pStuNode)
+	bool del(StuNode * pStuNode)
 	{
 		if (pStuNode == NULL)
 		{
 			cout << "搜索不到此人，操作取消！" << endl;
-			system("pause");
-			return;
+			return false;
 		}
 		else if (pStuNode == pHead)
 		{
@@ -261,20 +264,19 @@ public:
 			delete pStuNode;
 			p = NULL;
 		}
+		return true;
 	}
-	void DelFromName(char * name = NULL)
+	bool DelFromName(char * name = NULL)
 	{
-		del(stulist.SearchName(name));
+		return del(stulist.SearchName(name));
 	}
-	void DelFromID(long id)
+	bool DelFromID(long id)
 	{
-		del(stulist.SearchID(id));
-		system("pause");
+		return del(stulist.SearchID(id));
 	}
-	void DelFromID()
+	bool DelFromID()
 	{
-		del(stulist.SearchID());
-		system("pause");
+		return del(stulist.SearchID());
 	}
 	StuNode *Swap(StuNode *p1, StuNode *p2,bool FromMark=false)
 	{
@@ -528,35 +530,41 @@ public:
 			strcpy(this->subject, subject);
 		}
 	}
-	void LoadAllMark()
-	{
-		ifstream infile;
-		infile.open("D:\\全班成绩.txt");	//尝试打开
-		if (infile.good() == false)
-		{
-			cout << "文件不存在，操作取消！" << endl;
-			system("pause");
-			return;
-		}
-	}
 	void ResetStuMark()
 	{
 		cout << "修改哪位学生的成绩？" << endl;
 		cout<<"a.通过学号搜索\t\t"<<"b.通过名字搜索\t\t" << endl;
 		char choice;
 		cin >> choice;
+		while (cin.get() != '\n')
+		{
+			continue;
+		}
+		StuNode *temp = NULL;
 		if (choice == 'a')
 		{
-			stulist.SearchID()->stu.SetStuMark();
+			temp = stulist.SearchID();
 		}
 		else if (choice == 'b')
 		{
-			stulist.SearchName()->stu.SetStuMark();
+			temp = stulist.SearchName();
 		}
 		else
 		{
 			cout << "非法输入，操作取消！" << endl;
+			system("pause");
+			return;
 		}
+		if (temp)
+		{
+			temp->stu.SetStuMark();
+			cout << "修改成绩成功" << endl;
+		}
+		else
+		{
+			cout << "没有此学生，操作取消！" << endl;
+		}
+		system("pause");
 	}
 	void ShowMarkAnalyze()
 	{
@@ -608,21 +616,31 @@ public:
 	}
 	void add()
 	{
-		TeaNode * p = new TeaNode;
-		if (pHead == NULL)
+		while (1)
 		{
-			pHead = p;
-			pHead->pNext = NULL;
+			TeaNode * p = new TeaNode;
+			if (pHead == NULL)
+			{
+				pHead = p;
+				pHead->pNext = NULL;
+			}
+			else
+			{
+				p->pNext = pHead;
+				pHead = p;
+			}
+			cout << "请输入教师名字(直接敲击回车停止添加)：" << endl;
+			cin.getline(p->tea.getName(), 30);
+			if (*(p->tea.getName()) == '\0')
+			{
+				cout << "教师名字为空，停止添加" << endl;
+				del(p);
+				system("pause");
+				return;
+			}
+			p->tea.resetpassword();
+			p->tea.SetSubject();
 		}
-		else
-		{
-			p->pNext = pHead;
-			pHead = p;
-		}
-		cout << "请输入教师名字：" << endl;
-		cin.getline(p->tea.getName(), 30);
-		p->tea.resetpassword();
-		p->tea.SetSubject();
 	}
 	void add(Teacher &tea)
 	{
@@ -639,12 +657,12 @@ public:
 		}
 		p->tea = tea;
 	}
-	void del(TeaNode * pTeaNode)
+	bool del(TeaNode * pTeaNode)
 	{
 		if (pTeaNode == NULL)
 		{
-			cout << "pTeaNode参数为空！" << endl;
-			return;
+			cout << "没有该老师，操作取消！" << endl;
+			return false;
 		}
 		else if (pTeaNode == pHead)
 		{
@@ -664,12 +682,11 @@ public:
 			delete pTeaNode;
 			p = NULL;
 		}
-		cout << "删除成功！" << endl;
-		system("pause");
+		return true;
 	}
-	void DelFromName(char *name=NULL)
+	bool DelFromName(char *name=NULL)
 	{
-		del(tealist.SearchName(name));
+		return del(tealist.SearchName(name));
 	}
 	void ShowAll()
 	{
@@ -689,10 +706,10 @@ public:
 	{
 		if (name == NULL)
 		{
-			cout << "请输入学生名字：" << endl;
+			cout << "请输入教师名字：" << endl;
 			char rname[30];
 			cin.getline(rname, 30);
-			SearchName(rname);
+			return SearchName(rname);	//递归
 		}
 		TeaNode * p = pHead;
 		while (p != NULL && strcmp(p->tea.getName(), name) != 0)
@@ -760,11 +777,11 @@ void menu(logintype type)
 		break;
 	case Tea:
 		cout << "功能菜单：" << endl;
-		cout << "a.显示全班名单\t"<<"b.录入学生成绩"<< endl
+		cout << "a.显示全班名单\t\t"<<"b.录入学生成绩"<< endl
 			<<"c.修改学生成绩\t\t"<<"d.查询全班成绩\t\t" <<endl
 			<< "e.成绩分析\t\t\t"<<"f.添加学生\t\t" <<endl
 			<< "g.删除学生\t\t\t"<<"h.导出全班成绩\t\t" <<endl
-			<< "i.修改密码\t\t" << "q.保存数据并退出系统" << endl;
+			<< "i.修改密码\t\t\t" << "q.保存数据并退出系统" << endl;
 		break;
 	case Adm:
 		cout << "功能菜单：" << endl;
@@ -919,7 +936,7 @@ void SetStuMark(char * StuName)
 void loadfile()
 {
 	ifstream infile;
-	infile.open("D:\\userlist.data",ios_base::binary|ios_base::in);
+	infile.open("userlist.data",ios_base::binary|ios_base::in);
 	if (infile.good() == false)
 	{
 		cout << "文件不存在，无载入数据！" << endl;
@@ -950,7 +967,7 @@ void loadfile()
 void savefile()
 {
 	ofstream outfile;
-	outfile.open("D:\\userlist.data", ios_base::binary | ios_base::out);
+	outfile.open("userlist.data", ios_base::binary | ios_base::out);
 	StuNode *pStu = stulist.pHead;
 	TeaNode *pTea = tealist.pHead;
 	/*开始计数*/
@@ -989,7 +1006,7 @@ void savefile()
 void SaveAllMark()
 {
 	ofstream outfile;
-	outfile.open("D:\\全班成绩.txt");
+	outfile.open("全班成绩.txt");
 	if (outfile.good() == false)
 	{
 		cout << "未知错误，保存失败" << endl;
@@ -1006,6 +1023,7 @@ void SaveAllMark()
 			<< p->stu.getSumMark() << endl;
 		p = p->pNext;
 	}
+	cout << "导出成功！请到程序目录下寻找文件" << endl;
 }
 
 int main()
@@ -1048,7 +1066,6 @@ int main()
 				system("cls");
 				SortWithMark(stulist);
 				((Student*)user)->SaveMark();
-				cout << "导出成功！" << endl;
 				system("pause");
 				break;
 			case'd':
@@ -1082,9 +1099,8 @@ int main()
 				system("pause");
 				break;
 			case'c':
-				system("pause");
+				system("cls");
 				((Teacher *)user)->ResetStuMark();
-				system("pause");
 				break;
 			case'd':
 				system("cls");
@@ -1100,7 +1116,6 @@ int main()
 			case'f':
 				system("cls");
 				stulist.add();
-				system("pause");
 				break;
 			case'g':
 				system("cls");
@@ -1112,11 +1127,34 @@ int main()
 					continue;
 				}
 				if (mode == 'a')
-					stulist.DelFromName();
+				{
+					if (stulist.DelFromName() == true)
+					{
+						cout << "删除成功！" << endl;
+					}
+					else
+					{
+						cout << "删除失败" << endl;
+					}
+					system("pause");
+				}
 				else if (mode == 'b')
-					stulist.DelFromID();
+				{
+					if (stulist.DelFromID() == true)
+					{
+						cout << "删除成功！" << endl;
+					}
+					else
+					{
+						cout << "删除失败" << endl;
+					}
+					system("pause");
+				}
 				else
-					cout << "非法输入！" << endl;
+				{
+					cout << "非法输入，操作取消！" << endl;
+					system("pause");
+				}
 				break;
 			case'h':
 				system("cls");
@@ -1163,17 +1201,31 @@ int main()
 				}
 				if (mode == 'a')
 				{
-					stulist.DelFromName();
+					if (stulist.DelFromName() == true)
+					{
+						cout << "删除成功！" << endl;
+					}
+					else
+					{
+						cout << "删除失败" << endl;
+					}
 					system("pause");
 				}
 				else if (mode == 'b')
 				{
-					stulist.DelFromID();
+					if (stulist.DelFromID() == true)
+					{
+						cout << "删除成功！" << endl;
+					}
+					else
+					{
+						cout << "删除失败" << endl;
+					}
 					system("pause");
 				}
 				else
 				{
-					cout << "非法输入！" << endl;
+					cout << "非法输入，操作取消！" << endl;
 					system("pause");
 				}
 				break;
@@ -1183,7 +1235,15 @@ int main()
 				break;
 			case'e':
 				system("cls");
-				tealist.DelFromName();
+				if (tealist.DelFromName() == true)
+				{
+					cout << "删除成功！" << endl;
+				}
+				else
+				{
+					cout << "删除失败" << endl;
+				}
+				system("pause");
 				break;
 			case'f':
 				system("cls");
