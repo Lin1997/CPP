@@ -1,13 +1,13 @@
-/*å­¦ç”Ÿæˆç»©ç®¡ç†ç³»ç»Ÿ*/
+/*Ñ§Éú³É¼¨¹ÜÀíÏµÍ³*/
 #include<stdlib.h>				//for system()
 #include<fstream>
 #include<cstring>
 #include <iostream>
 using namespace std;
 
-enum logintype { Nologin, Stu, Tea, Adm };				//ç™»é™†çŠ¶æ€
-class People;		//å‘å‰å£°æ˜ï¼Œä¸ºäº†å£°æ˜ä¸‹é¢çš„PeopleæŒ‡é’ˆ
-People * user = NULL;												//å½“å‰ç”¨æˆ·
+enum logintype { Nologin, Stu, Tea, Adm };				//µÇÂ½×´Ì¬
+class People;		//ÏòÇ°ÉùÃ÷£¬ÎªÁËÉùÃ÷ÏÂÃæµÄPeopleÖ¸Õë
+People * user = NULL;												//µ±Ç°ÓÃ»§
 logintype state = Nologin;
 
 class People
@@ -33,19 +33,19 @@ public:
 		}
 		else
 		{
-			cout << "è¯·è¾“å…¥æ–°å¯†ç ï¼š" << endl;
+			cout << "ÇëÊäÈëĞÂÃÜÂë£º" << endl;
 			cin.getline(Password, 30);
 			if (strcmp(Password, "")==0)
 			{
 				strcpy(Password, "0000");
-				cout << "å¯†ç ä¸èƒ½ä¸ºç©ºï¼Œå·²è®¾ç½®ä¸º\"0000\"" << endl;
+				cout << "ÃÜÂë²»ÄÜÎª¿Õ£¬ÒÑÉèÖÃÎª\"0000\"" << endl;
 				system("pause");
 			}
 		}
 	}
 	virtual void ShowInf()const
 	{
-		cout << "åå­—ï¼š" << name;
+		cout << "Ãû×Ö£º" << name;
 	}
 };
 People::People(char * rname, char * password)
@@ -61,7 +61,7 @@ People::People(char * rname, char * password)
 	}
 	else
 	{
-		cout << "Passwordå‚æ•°ä¸ºç©ºï¼æ“ä½œå–æ¶ˆã€‚" << endl;
+		cout << "Password²ÎÊıÎª¿Õ£¡²Ù×÷È¡Ïû¡£" << endl;
 	}
 }
 
@@ -76,7 +76,7 @@ private:
 	}mark;
 	long ID;
 public:
-	static int num;	//å·²å­˜å­¦ç”Ÿä¸ªæ•°
+	static int num;	//ÒÑ´æÑ§Éú¸öÊı
 	Student(char * name = "NoName", char * password = "0000",long id=num,int Chinese=0,int Math=0,int English=0) :People(name, password)
 	{
 		mark.Chinese = Chinese;
@@ -101,7 +101,7 @@ public:
 	void SetStuMark()
 	{
 		int Chinese, Math, English;
-		cout << "è¯·è¿ç»­è¾“å…¥è¯­æ–‡æˆç»©ï¼Œæ•°å­¦æˆç»©å’Œè‹±è¯­æˆç»©ï¼š" << endl;
+		cout << "ÇëÁ¬ĞøÊäÈëÓïÎÄ³É¼¨£¬ÊıÑ§³É¼¨ºÍÓ¢Óï³É¼¨£º" << endl;
 		cin >> Chinese >> Math >> English;
 		SetStuMark(Chinese, Math, English);
 	}
@@ -120,7 +120,7 @@ public:
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << "\tå­¦å·ï¼š" << ID;
+		cout << "\tÑ§ºÅ£º" << ID;
 	}
 	Mark getMark()
 	{
@@ -128,40 +128,40 @@ public:
 	}
 	void ShowMark()
 	{
-		cout << "è¯­æ–‡ï¼š" << mark.Chinese << "\t"
-			<<"æ•°å­¦ï¼š" << mark.Math << "\t"
-			<< "è‹±è¯­ï¼š" << mark.English <<"\t" << endl;
-		cout << "æ€»åˆ†" << this->getSumMark() << "\t"
-			<< "å¹³å‡åˆ†" << this->getAverageMark() << endl;
+		cout << "ÓïÎÄ£º" << mark.Chinese << "\t"
+			<<"ÊıÑ§£º" << mark.Math << "\t"
+			<< "Ó¢Óï£º" << mark.English <<"\t" << endl;
+		cout << "×Ü·Ö" << this->getSumMark() << "\t"
+			<< "Æ½¾ù·Ö" << this->getAverageMark() << endl;
 	}
 	void SaveMark()
 	{
 		ofstream outfile;
 		char filename[30];
 		strcpy(filename, this->getName());
-		strcat(filename, "çš„æˆç»©å•.txt");
+		strcat(filename, "µÄ³É¼¨µ¥.txt");
 		outfile.open(filename);
 		Mark temp = this->getMark();
-		outfile << this->getName() << "çš„æˆç»©å•ï¼š" << endl
-			<< "è¯­æ–‡ï¼š" << temp.Chinese << endl
-			<< "æ•°å­¦ï¼š" << temp.Math << endl
-			<< "è‹±è¯­ï¼š" << temp.English << endl
-			<< "æ€»åˆ†ï¼š" << this->getSumMark() << endl
-			<< "å¹³å‡åˆ†ï¼š" << this->getAverageMark() << endl;
+		outfile << this->getName() << "µÄ³É¼¨µ¥£º" << endl
+			<< "ÓïÎÄ£º" << temp.Chinese << endl
+			<< "ÊıÑ§£º" << temp.Math << endl
+			<< "Ó¢Óï£º" << temp.English << endl
+			<< "×Ü·Ö£º" << this->getSumMark() << endl
+			<< "Æ½¾ù·Ö£º" << this->getAverageMark() << endl;
 		outfile.close();
-		cout << "å¯¼å‡ºæˆåŠŸï¼è¯·åˆ°ç¨‹åºæ ¹ç›®å½•ä¸‹å¯»æ‰¾æ–‡ä»¶" << endl;
+		cout << "µ¼³ö³É¹¦£¡Çëµ½³ÌĞò¸ùÄ¿Â¼ÏÂÑ°ÕÒÎÄ¼ş" << endl;
 	}
 };
 int Student::num = 1;
 
-/*å­¦ç”ŸèŠ‚ç‚¹ç»“æ„ä½“*/
+/*Ñ§Éú½Úµã½á¹¹Ìå*/
 struct StuNode
 {
 	Student stu;
 	StuNode * pNext;
 };
 
-/*å­¦ç”ŸèŠ‚ç‚¹ç±» å£°æ˜*/
+/*Ñ§Éú½ÚµãÀà ÉùÃ÷*/
 class StuList
 {
 private:
@@ -195,7 +195,7 @@ public:
 	friend void SetStuMark(char * StuName);
 }stulist;
 
-/*å­¦ç”ŸèŠ‚ç‚¹ç±» å®ç°*/
+/*Ñ§Éú½ÚµãÀà ÊµÏÖ*/
 StuList::StuList()
 {
 	pHead = NULL;
@@ -243,11 +243,11 @@ void StuList::add()
 			p->pNext = pHead;
 			pHead = p;
 		}
-		cout << "è¯·è¾“å…¥å­¦ç”Ÿåå­—(ç›´æ¥æ•²å‡»å›è½¦åœæ­¢æ·»åŠ )ï¼š" << endl;
+		cout << "ÇëÊäÈëÑ§ÉúÃû×Ö(Ö±½ÓÇÃ»÷»Ø³µÍ£Ö¹Ìí¼Ó)£º" << endl;
 		cin.getline(p->stu.getName(), 30);
 		if (*(p->stu.getName()) == '\0')
 		{
-			cout << "è´¦æˆ·åä¸ºç©ºï¼Œåœæ­¢æ·»åŠ " << endl;
+			cout << "ÕË»§ÃûÎª¿Õ£¬Í£Ö¹Ìí¼Ó" << endl;
 			stulist.del(p);
 			Student::num--;
 			system("pause");
@@ -275,7 +275,7 @@ bool StuList::del(StuNode * pStuNode)
 {
 	if (pStuNode == NULL)
 	{
-		cout << "æœç´¢ä¸åˆ°æ­¤äººï¼Œæ“ä½œå–æ¶ˆï¼" << endl;
+		cout << "ËÑË÷²»µ½´ËÈË£¬²Ù×÷È¡Ïû£¡" << endl;
 		return false;
 	}
 	else if (pStuNode == pHead)
@@ -288,7 +288,7 @@ bool StuList::del(StuNode * pStuNode)
 	else
 	{
 		StuNode *p = pHead;
-		while (p->pNext != pStuNode)		//æ‰¾åˆ°å‰ä¸€ä¸ªèŠ‚ç‚¹
+		while (p->pNext != pStuNode)		//ÕÒµ½Ç°Ò»¸ö½Úµã
 		{
 			p = p->pNext;
 		}
@@ -314,26 +314,26 @@ StuNode * StuList::Swap(StuNode *p1, StuNode *p2,bool FromMark)
 {
 	StuNode *temp1;
 	StuNode *temp2;
-	for (temp1 = pHead; temp1 != NULL&&temp1->pNext != p1; temp1 = temp1->pNext)	//å¯»æ‰¾p1å‰çš„èŠ‚ç‚¹çš„æŒ‡é’ˆ
+	for (temp1 = pHead; temp1 != NULL&&temp1->pNext != p1; temp1 = temp1->pNext)	//Ñ°ÕÒp1Ç°µÄ½ÚµãµÄÖ¸Õë
 	{
 		continue;
 	}
-	for (temp2 = pHead; temp2 != NULL&&temp2->pNext != p2; temp2 = temp2->pNext)	//å¯»æ‰¾p2å‰çš„èŠ‚ç‚¹çš„æŒ‡é’ˆ
+	for (temp2 = pHead; temp2 != NULL&&temp2->pNext != p2; temp2 = temp2->pNext)	//Ñ°ÕÒp2Ç°µÄ½ÚµãµÄÖ¸Õë
 	{
 		continue;
 	}
 	if (temp1 == NULL&&temp2!=NULL)
 	{
-		if (p1 == pHead)		//p1æ˜¯å¤´ç»“ç‚¹
+		if (p1 == pHead)		//p1ÊÇÍ·½áµã
 		{
-			StuNode *temp = p2->pNext;		//å¤‡ä»½
+			StuNode *temp = p2->pNext;		//±¸·İ
 			pHead = p2;
 
-			if (p1->pNext == p2)		//ç›¸é‚»
+			if (p1->pNext == p2)		//ÏàÁÚ
 			{
 				p2->pNext = p1;
 			}
-			else																//ä¸ç›¸é‚»
+			else																//²»ÏàÁÚ
 			{
 				p2->pNext = p1->pNext;
 				temp2->pNext = p1;
@@ -343,16 +343,16 @@ StuNode * StuList::Swap(StuNode *p1, StuNode *p2,bool FromMark)
 	}
 	else if (temp2 == NULL&&temp1!=NULL)
 	{
-		if (p2 == pHead)		//p2æ˜¯å¤´ç»“ç‚¹
+		if (p2 == pHead)		//p2ÊÇÍ·½áµã
 		{
-			StuNode *temp = p1->pNext;		//å¤‡ä»½
+			StuNode *temp = p1->pNext;		//±¸·İ
 			pHead = p1;
 
-			if (p1->pNext == p2)		//ç›¸é‚»
+			if (p1->pNext == p2)		//ÏàÁÚ
 			{
 				p1->pNext = p2;
 			}
-			else									//ä¸ç›¸é‚»
+			else									//²»ÏàÁÚ
 			{
 				p1->pNext = p2->pNext;
 				temp1->pNext = p2;
@@ -362,17 +362,17 @@ StuNode * StuList::Swap(StuNode *p1, StuNode *p2,bool FromMark)
 	}
 	else
 	{
-		if (p1->pNext == p2 || p2->pNext == p1)		//ç›¸é‚»
+		if (p1->pNext == p2 || p2->pNext == p1)		//ÏàÁÚ
 		{
-			StuNode *temp = p2->pNext;	//å¤‡ä»½
+			StuNode *temp = p2->pNext;	//±¸·İ
 
 			p2->pNext = temp1->pNext;
 			temp1->pNext = p2;
 			p1->pNext = temp;
 		}
-		else														//ä¸ç›¸é‚»
+		else														//²»ÏàÁÚ
 		{
-			StuNode *temp = p2->pNext;	//å¤‡ä»½
+			StuNode *temp = p2->pNext;	//±¸·İ
 
 			temp1->pNext = p2;
 			p2->pNext = p1->pNext;
@@ -393,7 +393,7 @@ void StuList::ShowAll()
 {
 	if (pHead == NULL)
 	{
-		cout << "å­¦ç”Ÿåˆ—è¡¨ä¸ºç©ºï¼" << endl;
+		cout << "Ñ§ÉúÁĞ±íÎª¿Õ£¡" << endl;
 		return;
 	}
 	StuNode * p = pHead;
@@ -408,7 +408,7 @@ StuNode * StuList::SearchName(char * name)
 {
 	if (name == NULL)
 	{
-		cout << "è¯·è¾“å…¥å­¦ç”Ÿåå­—ï¼š" << endl;
+		cout << "ÇëÊäÈëÑ§ÉúÃû×Ö£º" << endl;
 		char rname[30];
 		cin.getline(rname, 30);
 		return SearchName(rname);
@@ -432,7 +432,7 @@ StuNode * StuList::SearchID(long id)
 StuNode * StuList::SearchID()
 {
 	long id;
-	cout << "è¯·è¾“å…¥å­¦å·ï¼š" << endl;
+	cout << "ÇëÊäÈëÑ§ºÅ£º" << endl;
 	cin >> id;
 	return SearchID(id);
 }
@@ -538,7 +538,7 @@ public:
 		}
 		else
 		{
-			cout << "subjectå‚æ•°ä¸ºç©ºï¼" << endl;
+			cout << "subject²ÎÊıÎª¿Õ£¡" << endl;
 		}
 	}
 	virtual bool verify(char *password)
@@ -549,7 +549,7 @@ public:
 	{
 		if (subject == NULL)
 		{
-			cout << "è¯·è¾“å…¥æ•™å¸ˆæ•™æˆç§‘ç›®ï¼š" << endl;
+			cout << "ÇëÊäÈë½ÌÊ¦½ÌÊÚ¿ÆÄ¿£º" << endl;
 			cin.getline(this->subject, 10);
 		}
 		else
@@ -559,8 +559,8 @@ public:
 	}
 	void ResetStuMark()
 	{
-		cout << "ä¿®æ”¹å“ªä½å­¦ç”Ÿçš„æˆç»©ï¼Ÿ" << endl;
-		cout<<"a.é€šè¿‡å­¦å·æœç´¢\t\t"<<"b.é€šè¿‡åå­—æœç´¢\t\t" << endl;
+		cout << "ĞŞ¸ÄÄÄÎ»Ñ§ÉúµÄ³É¼¨£¿" << endl;
+		cout<<"a.Í¨¹ıÑ§ºÅËÑË÷\t\t"<<"b.Í¨¹ıÃû×ÖËÑË÷\t\t" << endl;
 		char choice;
 		cin >> choice;
 		while (cin.get() != '\n')
@@ -578,50 +578,50 @@ public:
 		}
 		else
 		{
-			cout << "éæ³•è¾“å…¥ï¼Œæ“ä½œå–æ¶ˆï¼" << endl;
+			cout << "·Ç·¨ÊäÈë£¬²Ù×÷È¡Ïû£¡" << endl;
 			system("pause");
 			return;
 		}
 		if (temp)
 		{
 			temp->stu.SetStuMark();
-			cout << "ä¿®æ”¹æˆç»©æˆåŠŸ" << endl;
+			cout << "ĞŞ¸Ä³É¼¨³É¹¦" << endl;
 		}
 		else
 		{
-			cout << "æ²¡æœ‰æ­¤å­¦ç”Ÿï¼Œæ“ä½œå–æ¶ˆï¼" << endl;
+			cout << "Ã»ÓĞ´ËÑ§Éú£¬²Ù×÷È¡Ïû£¡" << endl;
 		}
 		system("pause");
 	}
 	void ShowMarkAnalyze()
 	{
-		cout << "å…¨ç­æˆç»©å•:" << endl;
+		cout << "È«°à³É¼¨µ¥:" << endl;
 		stulist.ShowAllMark();
-		cout << "ç­çº§å¹³å‡åˆ†æƒ…å†µï¼š" << endl;
-		cout << "è¯­æ–‡ï¼š" << stulist.getClassChineseAverage() << "\t"
-			<< "æ•°å­¦ï¼š" << stulist.getClassMathAverage() << "\t"
-			<< "è‹±è¯­ï¼š" << stulist.getClassEnglishAverage() << endl;
-		cout << "ç­çº§åŠæ ¼ç‡ï¼š" << endl;
-		cout << "è¯­æ–‡ï¼š" << stulist.getClassChinesePassRate() * 100 << "%\t"
-			<< "æ•°å­¦ï¼š" << stulist.getClassMathPassRate() * 100 << "%\t"
-			<< "è‹±è¯­ï¼š" << stulist.getClassEnglishPassRate() * 100 << "%\t" << endl;
+		cout << "°à¼¶Æ½¾ù·ÖÇé¿ö£º" << endl;
+		cout << "ÓïÎÄ£º" << stulist.getClassChineseAverage() << "\t"
+			<< "ÊıÑ§£º" << stulist.getClassMathAverage() << "\t"
+			<< "Ó¢Óï£º" << stulist.getClassEnglishAverage() << endl;
+		cout << "°à¼¶¼°¸ñÂÊ£º" << endl;
+		cout << "ÓïÎÄ£º" << stulist.getClassChinesePassRate() * 100 << "%\t"
+			<< "ÊıÑ§£º" << stulist.getClassMathPassRate() * 100 << "%\t"
+			<< "Ó¢Óï£º" << stulist.getClassEnglishPassRate() * 100 << "%\t" << endl;
 	}
 	virtual void ShowInf()const
 	{
 		People::ShowInf();
-		cout << "\tæˆè¯¾ï¼š";
+		cout << "\tÊÚ¿Î£º";
 		cout << this->subject << endl;
 	}
 };
 
-/*æ•™å¸ˆèŠ‚ç‚¹ç»“æ„ä½“*/
+/*½ÌÊ¦½Úµã½á¹¹Ìå*/
 struct TeaNode
 {
 	Teacher tea;
 	TeaNode * pNext;
 };
 
-/*æ•™å¸ˆèŠ‚ç‚¹ç±» å£°æ˜*/
+/*½ÌÊ¦½ÚµãÀà ÉùÃ÷*/
 class TeaList
 {
 private:
@@ -638,7 +638,7 @@ public:
 	friend void savefile();
 }tealist;
 
-/*æ•™å¸ˆèŠ‚ç‚¹ç±» å®ç°*/
+/*½ÌÊ¦½ÚµãÀà ÊµÏÖ*/
 TeaList::~TeaList()
 {
     TeaNode *p = NULL;
@@ -669,11 +669,11 @@ void TeaList::add()
             p->pNext = pHead;
             pHead = p;
         }
-        cout << "è¯·è¾“å…¥æ•™å¸ˆåå­—(ç›´æ¥æ•²å‡»å›è½¦åœæ­¢æ·»åŠ )ï¼š" << endl;
+        cout << "ÇëÊäÈë½ÌÊ¦Ãû×Ö(Ö±½ÓÇÃ»÷»Ø³µÍ£Ö¹Ìí¼Ó)£º" << endl;
         cin.getline(p->tea.getName(), 30);
         if (*(p->tea.getName()) == '\0')
         {
-            cout << "æ•™å¸ˆåå­—ä¸ºç©ºï¼Œåœæ­¢æ·»åŠ " << endl;
+            cout << "½ÌÊ¦Ãû×ÖÎª¿Õ£¬Í£Ö¹Ìí¼Ó" << endl;
             del(p);
             system("pause");
             return;
@@ -701,7 +701,7 @@ bool TeaList::del(TeaNode * pTeaNode)
 {
     if (pTeaNode == NULL)
     {
-        cout << "æ²¡æœ‰è¯¥è€å¸ˆï¼Œæ“ä½œå–æ¶ˆï¼" << endl;
+        cout << "Ã»ÓĞ¸ÃÀÏÊ¦£¬²Ù×÷È¡Ïû£¡" << endl;
         return false;
     }
     else if (pTeaNode == pHead)
@@ -732,7 +732,7 @@ void TeaList::ShowAll()
 {
     if (pHead == NULL)
     {
-        cout << "è€å¸ˆåˆ—è¡¨ä¸ºç©ºï¼" << endl;
+        cout << "ÀÏÊ¦ÁĞ±íÎª¿Õ£¡" << endl;
         return;
     }
     TeaNode * p = pHead;
@@ -746,10 +746,10 @@ TeaNode * TeaList::SearchName(char * name)
 {
     if (name == NULL)
     {
-        cout << "è¯·è¾“å…¥æ•™å¸ˆåå­—ï¼š" << endl;
+        cout << "ÇëÊäÈë½ÌÊ¦Ãû×Ö£º" << endl;
         char rname[30];
         cin.getline(rname, 30);
-        return SearchName(rname);	//é€’å½’
+        return SearchName(rname);	//µİ¹é
     }
     TeaNode * p = pHead;
     while (p != NULL && strcmp(p->tea.getName(), name) != 0)
@@ -776,64 +776,64 @@ public:
 	void ShowAll()
 	{
 		system("cls");
-		cout << "å­¦ç”Ÿåˆ—è¡¨ï¼š" << endl;
+		cout << "Ñ§ÉúÁĞ±í£º" << endl;
 		stulist.ShowAll();
 		cout << endl;
-		cout << "æ•™å¸ˆåˆ—è¡¨ï¼š" << endl;
+		cout << "½ÌÊ¦ÁĞ±í£º" << endl;
 		tealist.ShowAll();
 		cout << endl;
 		system("pause");
 	}
-}admin;		//ç®¡ç†å‘˜è´¦æˆ·
+}admin;		//¹ÜÀíÔ±ÕË»§
 
-/*æ™®é€šå‡½æ•° å£°æ˜*/
-void menu(logintype state);					//æ˜¾ç¤ºèœå•å‡½æ•°
-void login();					//ç™»é™†å‡½æ•°
-void SortWithID(StuList & stulist);			//æŒ‰å­¦å·æ’åºå‡½æ•°
-void SortWithMark(StuList & stulist);		//æŒ‰æˆç»©æ’åºå‡½æ•°
+/*ÆÕÍ¨º¯Êı ÉùÃ÷*/
+void menu(logintype state);					//ÏÔÊ¾²Ëµ¥º¯Êı
+void login();					//µÇÂ½º¯Êı
+void SortWithID(StuList & stulist);			//°´Ñ§ºÅÅÅĞòº¯Êı
+void SortWithMark(StuList & stulist);		//°´³É¼¨ÅÅĞòº¯Êı
 void SetStuMark(char * StuName = NULL);
-void loadfile();				//ä»æ–‡ä»¶è½½å…¥æ•°æ®å‡½æ•°
-void savefile();				//ä¿å­˜æ•°æ®åˆ°æ–‡ä»¶å‡½æ•°
-void SaveAllMark();		//å¯¼å‡ºå­¦ç”Ÿæˆç»©å•å‡½æ•°
+void loadfile();				//´ÓÎÄ¼şÔØÈëÊı¾İº¯Êı
+void savefile();				//±£´æÊı¾İµ½ÎÄ¼şº¯Êı
+void SaveAllMark();		//µ¼³öÑ§Éú³É¼¨µ¥º¯Êı
 
-/*æ™®é€šå‡½æ•° å®ç°*/
+/*ÆÕÍ¨º¯Êı ÊµÏÖ*/
 void menu(logintype type)
 {
 	system("cls");
-	for (int i = 0; i < 48; i++)				//æ ‡é¢˜
+	for (int i = 0; i < 48; i++)				//±êÌâ
 	{
 		cout << ' ';
 	}
-	cout << "å­¦ç”Ÿæˆç»©ç®¡ç†ç³»ç»Ÿ" << endl;
+	cout << "Ñ§Éú³É¼¨¹ÜÀíÏµÍ³" << endl;
 
 	switch (type)
 	{
 	case Nologin:
-		cout << "è¯·ç™»é™†ç³»ç»Ÿ" << endl;
+		cout << "ÇëµÇÂ½ÏµÍ³" << endl;
 		break;
 	case Stu:
-		cout << "åŠŸèƒ½èœå•ï¼š" << endl;
-		cout << "a.æŸ¥è¯¢è‡ªå·±çš„æˆç»©\t\t"<< "b.æŸ¥è¯¢å…¨ç­æˆç»©\t\t" << endl
-			<< "c.å¯¼å‡ºæˆç»©\t\t\t"<< "d.ä¿®æ”¹å¯†ç \t\t" << endl
-			<< "q.ä¿å­˜æ•°æ®å¹¶é€€å‡ºç³»ç»Ÿ" << endl;
+		cout << "¹¦ÄÜ²Ëµ¥£º" << endl;
+		cout << "a.²éÑ¯×Ô¼ºµÄ³É¼¨\t\t"<< "b.²éÑ¯È«°à³É¼¨\t\t" << endl
+			<< "c.µ¼³ö³É¼¨\t\t\t"<< "d.ĞŞ¸ÄÃÜÂë\t\t" << endl
+			<< "q.±£´æÊı¾İ²¢ÍË³öÏµÍ³" << endl;
 		break;
 	case Tea:
-		cout << "åŠŸèƒ½èœå•ï¼š" << endl;
-		cout << "a.æ˜¾ç¤ºå…¨ç­åå•\t\t"<<"b.å½•å…¥å­¦ç”Ÿæˆç»©"<< endl
-			<<"c.ä¿®æ”¹å­¦ç”Ÿæˆç»©\t\t"<<"d.æŸ¥è¯¢å…¨ç­æˆç»©\t\t" <<endl
-			<< "e.æˆç»©åˆ†æ\t\t\t"<<"f.æ·»åŠ å­¦ç”Ÿ\t\t" <<endl
-			<< "g.åˆ é™¤å­¦ç”Ÿ\t\t\t"<<"h.å¯¼å‡ºå…¨ç­æˆç»©\t\t" <<endl
-			<< "i.ä¿®æ”¹å¯†ç \t\t\t" << "q.ä¿å­˜æ•°æ®å¹¶é€€å‡ºç³»ç»Ÿ" << endl;
+		cout << "¹¦ÄÜ²Ëµ¥£º" << endl;
+		cout << "a.ÏÔÊ¾È«°àÃûµ¥\t\t"<<"b.Â¼ÈëÑ§Éú³É¼¨"<< endl
+			<<"c.ĞŞ¸ÄÑ§Éú³É¼¨\t\t"<<"d.²éÑ¯È«°à³É¼¨\t\t" <<endl
+			<< "e.³É¼¨·ÖÎö\t\t\t"<<"f.Ìí¼ÓÑ§Éú\t\t" <<endl
+			<< "g.É¾³ıÑ§Éú\t\t\t"<<"h.µ¼³öÈ«°à³É¼¨\t\t" <<endl
+			<< "i.ĞŞ¸ÄÃÜÂë\t\t\t" << "q.±£´æÊı¾İ²¢ÍË³öÏµÍ³" << endl;
 		break;
 	case Adm:
-		cout << "åŠŸèƒ½èœå•ï¼š" << endl;
-		cout <<"a.æ˜¾ç¤ºç”¨æˆ·åˆ—è¡¨\t"<<"b.æ·»åŠ å­¦ç”Ÿ\t\t"<<endl
-			<<"c.åˆ é™¤å­¦ç”Ÿ\t\t"<< "d.æ·»åŠ æ•™å¸ˆ\t\t" << endl
-			<<"e.åˆ é™¤æ•™å¸ˆ\t\t" << "f.ä¿®æ”¹å¯†ç \t\t"<<endl
-			<< "q.ä¿å­˜æ•°æ®å¹¶é€€å‡ºç³»ç»Ÿ" << endl;
+		cout << "¹¦ÄÜ²Ëµ¥£º" << endl;
+		cout <<"a.ÏÔÊ¾ÓÃ»§ÁĞ±í\t"<<"b.Ìí¼ÓÑ§Éú\t\t"<<endl
+			<<"c.É¾³ıÑ§Éú\t\t"<< "d.Ìí¼Ó½ÌÊ¦\t\t" << endl
+			<<"e.É¾³ı½ÌÊ¦\t\t" << "f.ĞŞ¸ÄÃÜÂë\t\t"<<endl
+			<< "q.±£´æÊı¾İ²¢ÍË³öÏµÍ³" << endl;
 		break;
 	default:
-		cout << "typeå‚æ•°é”™è¯¯ï¼" << endl;
+		cout << "type²ÎÊı´íÎó£¡" << endl;
 	}
 }
 
@@ -843,13 +843,13 @@ void login()
 	char password[30];
 	if (stulist.isempty() && tealist.isempty())
 	{
-		cout << "è€å¸ˆåˆ—è¡¨å’Œå­¦ç”Ÿåˆ—è¡¨éƒ½ä¸ºç©ºï¼Œè¯·ä»¥ç®¡ç†å‘˜è´¦æˆ·ç™»é™†ã€‚(é»˜è®¤è´¦æˆ·:admin é»˜è®¤å¯†ç :0000)" << endl;
+		cout << "ÀÏÊ¦ÁĞ±íºÍÑ§ÉúÁĞ±í¶¼Îª¿Õ£¬ÇëÒÔ¹ÜÀíÔ±ÕË»§µÇÂ½¡£(Ä¬ÈÏÕË»§:admin Ä¬ÈÏÃÜÂë:0000)" << endl;
 	}
 	for (int i = 2; i >= 0; i--)
 	{
-		cout << "è¯·è¾“å…¥è´¦æˆ·åï¼š" << endl;
+		cout << "ÇëÊäÈëÕË»§Ãû£º" << endl;
 		cin.getline(name, 30);
-		cout << "è¯·è¾“å…¥å¯†ç ï¼š" << endl;
+		cout << "ÇëÊäÈëÃÜÂë£º" << endl;
 		cin.getline(password, 30);
 		StuNode *pStu = stulist.SearchName(name);
 		TeaNode *pTea = tealist.SearchName(name);
@@ -857,52 +857,52 @@ void login()
 		{
 			if (pStu->stu.verify(password))
 			{
-				cout << "ç™»é™†æˆåŠŸï¼š" << endl;
-				cout << "å½“å‰è´¦æˆ·ï¼š" << pStu->stu.getName() << "(å­¦ç”Ÿ)" << endl;
+				cout << "µÇÂ½³É¹¦£º" << endl;
+				cout << "µ±Ç°ÕË»§£º" << pStu->stu.getName() << "(Ñ§Éú)" << endl;
 				state = Stu;
 				user = &pStu->stu;
 				return;
 			}
 			else
 			{
-				cout << "è´¦æˆ·æˆ–å¯†ç é”™è¯¯ï¼";
-				cout << "å‰©ä½™" << i << "æ¬¡æœºä¼š" << endl;
+				cout << "ÕË»§»òÃÜÂë´íÎó£¡";
+				cout << "Ê£Óà" << i << "´Î»ú»á" << endl;
 			}
 		}
 		else if (pTea)
 		{
 			if (pTea->tea.verify(password))
 			{
-				cout << "ç™»é™†æˆåŠŸï¼š" << endl;
-				cout << "å½“å‰è´¦æˆ·ï¼š" << pTea->tea.getName() << "(æ•™å¸ˆ)" << endl;
+				cout << "µÇÂ½³É¹¦£º" << endl;
+				cout << "µ±Ç°ÕË»§£º" << pTea->tea.getName() << "(½ÌÊ¦)" << endl;
 				state = Tea;
 				user = &pTea->tea;
 				return;
 			}
 			else
 			{
-				cout << "è´¦æˆ·æˆ–å¯†ç é”™è¯¯ï¼";
-				cout << "å‰©ä½™" << i << "æ¬¡æœºä¼š" << endl;
+				cout << "ÕË»§»òÃÜÂë´íÎó£¡";
+				cout << "Ê£Óà" << i << "´Î»ú»á" << endl;
 			}
 		}
 		else
 		{
 			if (strcmp(admin.getName(), name) == 0 && admin.verify(password))
 			{
-				cout << "ç™»é™†æˆåŠŸï¼š" << endl;
-				cout << "å½“å‰è´¦æˆ·ï¼š" << admin.getName() << "(ç®¡ç†å‘˜)" << endl;
+				cout << "µÇÂ½³É¹¦£º" << endl;
+				cout << "µ±Ç°ÕË»§£º" << admin.getName() << "(¹ÜÀíÔ±)" << endl;
 				state = Adm;
 				user = (Admin*)&admin;
 				return;
 			}
 			else
 			{
-				cout << "è´¦æˆ·æˆ–å¯†ç é”™è¯¯ï¼";
-				cout << "å‰©ä½™" << i << "æ¬¡æœºä¼š" << endl;
+				cout << "ÕË»§»òÃÜÂë´íÎó£¡";
+				cout << "Ê£Óà" << i << "´Î»ú»á" << endl;
 			}
 		}
 	}
-	cout << "é”™è¯¯æ¬¡æ•°è¿‡å¤šï¼Œç™»å½•å¤±è´¥ï¼" << endl;
+	cout << "´íÎó´ÎÊı¹ı¶à£¬µÇÂ¼Ê§°Ü£¡" << endl;
 	state=Nologin;
 }
 
@@ -912,7 +912,7 @@ void SortWithID(StuList & stulist)
 	{
 		return;
 	}
-	/*é€‰æ‹©æ’åºæ³•*/
+	/*Ñ¡ÔñÅÅĞò·¨*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
 		StuNode *min = p1;
@@ -925,7 +925,7 @@ void SortWithID(StuList & stulist)
 		}
 		if (min != p1)
 		{
-			p1 = stulist.Swap(p1, min);	/*é“¾è¡¨å…ƒç´ äº¤æ¢åï¼Œè¦é‡æ–°ç¡®å®šå½“å‰ç¡®å®šå¥½çš„å°çš„å…ƒç´ */
+			p1 = stulist.Swap(p1, min);	/*Á´±íÔªËØ½»»»ºó£¬ÒªÖØĞÂÈ·¶¨µ±Ç°È·¶¨ºÃµÄĞ¡µÄÔªËØ*/
 		}
 	}
 }
@@ -936,7 +936,7 @@ void SortWithMark(StuList & stulist)
 	{
 		return;
 	}
-	/*é€‰æ‹©æ’åºæ³•*/
+	/*Ñ¡ÔñÅÅĞò·¨*/
 	for (StuNode *p1 = stulist.pHead; p1->pNext != NULL; p1 = p1->pNext)
 	{
 		StuNode *max = p1;
@@ -949,7 +949,7 @@ void SortWithMark(StuList & stulist)
 		}
 		if (max != p1)
 		{
-			p1 = stulist.Swap(p1, max);	/*é“¾è¡¨å…ƒç´ äº¤æ¢åï¼Œè¦é‡æ–°ç¡®å®šå½“å‰ç¡®å®šå¥½çš„å°çš„å…ƒç´ */
+			p1 = stulist.Swap(p1, max);	/*Á´±íÔªËØ½»»»ºó£¬ÒªÖØĞÂÈ·¶¨µ±Ç°È·¶¨ºÃµÄĞ¡µÄÔªËØ*/
 		}
 	}
 }
@@ -962,7 +962,7 @@ void SetStuMark(char * StuName)
 	}
 	else
 	{
-		cout << "æ ¹æ®å­¦å·ä»å°åˆ°å¤§å½•å…¥" << endl;
+		cout << "¸ù¾İÑ§ºÅ´ÓĞ¡µ½´óÂ¼Èë" << endl;
 		SortWithID(stulist);
 		StuNode *p = stulist.pHead;
 		while (p)
@@ -981,11 +981,11 @@ void loadfile()
 	infile.open("userlist.data",ios_base::binary|ios_base::in);
 	if (infile.good() == false)
 	{
-		cout << "æ–‡ä»¶ä¸å­˜åœ¨ï¼Œæ— è½½å…¥æ•°æ®ï¼" << endl;
+		cout << "ÎÄ¼ş²»´æÔÚ£¬ÎŞÔØÈëÊı¾İ£¡" << endl;
 		system("pause");
 		return;
 	}
-	/*è¯»å–ä¸ªæ•°*/
+	/*¶ÁÈ¡¸öÊı*/
 	int StuSum = 0, TeaSum = 0;
 	infile.read((char*)&StuSum, sizeof(int));
 	infile.read((char*)&TeaSum, sizeof(int));
@@ -1012,7 +1012,7 @@ void savefile()
 	outfile.open("userlist.data", ios_base::binary | ios_base::out);
 	StuNode *pStu = stulist.pHead;
 	TeaNode *pTea = tealist.pHead;
-	/*å¼€å§‹è®¡æ•°*/
+	/*¿ªÊ¼¼ÆÊı*/
 	int StuSum = 0;
 	int TeaSum = 0;
 	while (pStu)
@@ -1027,8 +1027,8 @@ void savefile()
 	}
 	pStu = stulist.pHead;
 	pTea = tealist.pHead;
-	/*ç»“æŸè®¡æ•°*/
-	//å‰2*sizeof(int)ä¸ªå­—èŠ‚å­˜æ”¾ä¸ªæ•°
+	/*½áÊø¼ÆÊı*/
+	//Ç°2*sizeof(int)¸ö×Ö½Ú´æ·Å¸öÊı
 	outfile.write((char*)&StuSum, sizeof(int));
 	outfile.write((char*)&TeaSum, sizeof(int));
 	while (pStu != NULL&&outfile.good())
@@ -1048,14 +1048,14 @@ void savefile()
 void SaveAllMark()
 {
 	ofstream outfile;
-	outfile.open("å…¨ç­æˆç»©.txt");
+	outfile.open("È«°à³É¼¨.txt");
 	if (outfile.good() == false)
 	{
-		cout << "æœªçŸ¥é”™è¯¯ï¼Œä¿å­˜å¤±è´¥" << endl;
+		cout << "Î´Öª´íÎó£¬±£´æÊ§°Ü" << endl;
 		system("pause");
 		return;
 	}
-	outfile << "å­¦å·\t" << "å§“å\t" << "è¯­æ–‡\t" << "æ•°å­¦\t" << "è‹±è¯­\t"<< "æ€»åˆ†\t" << endl;
+	outfile << "Ñ§ºÅ\t" << "ĞÕÃû\t" << "ÓïÎÄ\t" << "ÊıÑ§\t" << "Ó¢Óï\t"<< "×Ü·Ö\t" << endl;
 	SortWithMark(stulist);
 	StuNode *p = stulist.pHead;
 	while (p)
@@ -1065,12 +1065,12 @@ void SaveAllMark()
 			<< p->stu.getSumMark() << endl;
 		p = p->pNext;
 	}
-	cout << "å¯¼å‡ºæˆåŠŸï¼è¯·åˆ°ç¨‹åºç›®å½•ä¸‹å¯»æ‰¾æ–‡ä»¶" << endl;
+	cout << "µ¼³ö³É¹¦£¡Çëµ½³ÌĞòÄ¿Â¼ÏÂÑ°ÕÒÎÄ¼ş" << endl;
 }
 
 int main()
 {
-	cout << "å°è¯•è½½å…¥æ–‡ä»¶..." << endl;
+	cout << "³¢ÊÔÔØÈëÎÄ¼ş..." << endl;
 	loadfile();
 	menu(Nologin);
 	login();
@@ -1083,7 +1083,7 @@ int main()
 	do
 	{
 		menu(state);
-		cout << "è¯·é€‰æ‹©æ“ä½œï¼š" << endl;
+		cout << "ÇëÑ¡Ôñ²Ù×÷£º" << endl;
 		cin >> choice;
 		while (cin.get() != '\n')
 		{
@@ -1113,7 +1113,7 @@ int main()
 			case'd':
 				system("cls");
 				user->resetpassword();
-				cout << "å¯†ç ä¿®æ”¹æˆåŠŸï¼" << endl;
+				cout << "ÃÜÂëĞŞ¸Ä³É¹¦£¡" << endl;
 				system("pause");
 				break;
 			case'q':
@@ -1121,7 +1121,7 @@ int main()
 				system("pause");
 				break;
 			default:
-				cout << "éæ³•è¾“å…¥ï¼" << endl;
+				cout << "·Ç·¨ÊäÈë£¡" << endl;
 				system("pause");
 			}
 		}
@@ -1161,7 +1161,7 @@ int main()
 				break;
 			case'g':
 				system("cls");
-				cout << "a.é€šè¿‡åå­—æŸ¥æ‰¾å­¦ç”Ÿ\t\tb.é€šè¿‡å­¦å·æŸ¥æ‰¾å­¦ç”Ÿ" << endl;
+				cout << "a.Í¨¹ıÃû×Ö²éÕÒÑ§Éú\t\tb.Í¨¹ıÑ§ºÅ²éÕÒÑ§Éú" << endl;
 				char mode;
 				cin >> mode;
 				while (cin.get() != '\n')
@@ -1172,11 +1172,11 @@ int main()
 				{
 					if (stulist.DelFromName() == true)
 					{
-						cout << "åˆ é™¤æˆåŠŸï¼" << endl;
+						cout << "É¾³ı³É¹¦£¡" << endl;
 					}
 					else
 					{
-						cout << "åˆ é™¤å¤±è´¥" << endl;
+						cout << "É¾³ıÊ§°Ü" << endl;
 					}
 					system("pause");
 				}
@@ -1184,17 +1184,17 @@ int main()
 				{
 					if (stulist.DelFromID() == true)
 					{
-						cout << "åˆ é™¤æˆåŠŸï¼" << endl;
+						cout << "É¾³ı³É¹¦£¡" << endl;
 					}
 					else
 					{
-						cout << "åˆ é™¤å¤±è´¥" << endl;
+						cout << "É¾³ıÊ§°Ü" << endl;
 					}
 					system("pause");
 				}
 				else
 				{
-					cout << "éæ³•è¾“å…¥ï¼Œæ“ä½œå–æ¶ˆï¼" << endl;
+					cout << "·Ç·¨ÊäÈë£¬²Ù×÷È¡Ïû£¡" << endl;
 					system("pause");
 				}
 				break;
@@ -1207,15 +1207,15 @@ int main()
 			case'i':
 				system("cls");
 				user->resetpassword();
-				cout << "å¯†ç ä¿®æ”¹æˆåŠŸï¼" << endl;
+				cout << "ÃÜÂëĞŞ¸Ä³É¹¦£¡" << endl;
 				system("pause");
 				break;
-			case'q':cout << "ä¿å­˜æ•°æ®å¹¶é€€å‡ºç³»ç»Ÿ" << endl;
+			case'q':cout << "±£´æÊı¾İ²¢ÍË³öÏµÍ³" << endl;
 				savefile();
 				system("pause");
 				break;
 			default:
-				cout << "éæ³•è¾“å…¥ï¼" << endl;
+				cout << "·Ç·¨ÊäÈë£¡" << endl;
 				system("pause");
 			}
 		}
@@ -1234,7 +1234,7 @@ int main()
 				break;
 			case'c':
 				system("cls");
-				cout << "a.é€šè¿‡åå­—æŸ¥æ‰¾å­¦ç”Ÿ\t\tb.é€šè¿‡å­¦å·æŸ¥æ‰¾å­¦ç”Ÿ" << endl;
+				cout << "a.Í¨¹ıÃû×Ö²éÕÒÑ§Éú\t\tb.Í¨¹ıÑ§ºÅ²éÕÒÑ§Éú" << endl;
 				char mode;
 				cin >> mode;
 				while (cin.get() != '\n')
@@ -1245,11 +1245,11 @@ int main()
 				{
 					if (stulist.DelFromName() == true)
 					{
-						cout << "åˆ é™¤æˆåŠŸï¼" << endl;
+						cout << "É¾³ı³É¹¦£¡" << endl;
 					}
 					else
 					{
-						cout << "åˆ é™¤å¤±è´¥" << endl;
+						cout << "É¾³ıÊ§°Ü" << endl;
 					}
 					system("pause");
 				}
@@ -1257,17 +1257,17 @@ int main()
 				{
 					if (stulist.DelFromID() == true)
 					{
-						cout << "åˆ é™¤æˆåŠŸï¼" << endl;
+						cout << "É¾³ı³É¹¦£¡" << endl;
 					}
 					else
 					{
-						cout << "åˆ é™¤å¤±è´¥" << endl;
+						cout << "É¾³ıÊ§°Ü" << endl;
 					}
 					system("pause");
 				}
 				else
 				{
-					cout << "éæ³•è¾“å…¥ï¼Œæ“ä½œå–æ¶ˆï¼" << endl;
+					cout << "·Ç·¨ÊäÈë£¬²Ù×÷È¡Ïû£¡" << endl;
 					system("pause");
 				}
 				break;
@@ -1279,11 +1279,11 @@ int main()
 				system("cls");
 				if (tealist.DelFromName() == true)
 				{
-					cout << "åˆ é™¤æˆåŠŸï¼" << endl;
+					cout << "É¾³ı³É¹¦£¡" << endl;
 				}
 				else
 				{
-					cout << "åˆ é™¤å¤±è´¥" << endl;
+					cout << "É¾³ıÊ§°Ü" << endl;
 				}
 				system("pause");
 				break;
@@ -1292,18 +1292,18 @@ int main()
 				user->resetpassword();
 				system("pause");
 				break;
-			case'q':cout << "ä¿å­˜æ•°æ®å¹¶é€€å‡ºç³»ç»Ÿ" << endl;
+			case'q':cout << "±£´æÊı¾İ²¢ÍË³öÏµÍ³" << endl;
 				savefile();
 				system("pause");
 				break;
 			default:
-				cout << "éæ³•è¾“å…¥ï¼" << endl;
+				cout << "·Ç·¨ÊäÈë£¡" << endl;
 				system("pause");
 			}
 		}
 		else
 		{
-			cout << "æœªç™»å½•" << endl;
+			cout << "Î´µÇÂ¼" << endl;
 		}
 	} while (choice != 'q');
 	return 0;
